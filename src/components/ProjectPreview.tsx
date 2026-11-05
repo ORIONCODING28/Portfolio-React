@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, LockKeyhole, PanelLeft, Pause, Play, Plus, RotateCw, Share, Square } from 'lucide-react';
 import type { Project } from '../types';
 import { usePortfolio } from '../hooks/usePortfolio';
@@ -10,22 +10,14 @@ export function ProjectPreview({ project, priority = false }: { project: Project
   const pair = useRef<HTMLDivElement>(null);
   const [desktopFailed, setDesktopFailed] = useState(false);
   const [mobileFailed, setMobileFailed] = useState(false);
-  const [reduced, setReduced] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const [userPaused, setUserPaused] = useState<boolean | null>(null);
-  useEffect(() => {
-    const query = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const changed = () => setReduced(query.matches);
-    query.addEventListener('change', changed);
-    return () => query.removeEventListener('change', changed);
-  }, []);
-  const paused = userPaused ?? reduced;
+  const [paused, setUserPaused] = useState(false);
   const media = project.media;
   const desktop = media?.desktop || project.image;
   const mobile = media?.mobile;
   const hasVideo = Boolean(media?.desktopVideo || media?.mobileVideo);
   const desktopPoster = media?.desktopPoster || desktop || '';
   const mobilePoster = media?.mobilePoster || mobile || '';
-  usePreviewPlayback(pair, paused, `${media?.desktopVideo || ''}:${media?.mobileVideo || ''}:${desktopFailed}:${mobileFailed}`);
+  const { blocked, retry } = usePreviewPlayback(pair, paused, `${media?.desktopVideo || ''}:${media?.mobileVideo || ''}:${desktopFailed}:${mobileFailed}`);
   const desktopLabel = `${project.title} — ${isEnglish ? 'desktop preview' : 'anteprima desktop'}`;
   const mobileLabel = `${project.title} — ${isEnglish ? 'mobile preview' : 'anteprima mobile'}`;
   return <figure className="project-showcase">
@@ -49,9 +41,9 @@ export function ProjectPreview({ project, priority = false }: { project: Project
         </div>
       </div>}
     </div>
-    {hasVideo && <button type="button" className="preview-playback" aria-pressed={paused} onClick={() => setUserPaused(!paused)}>
-      {paused ? <Play size={15} aria-hidden="true"/> : <Pause size={15} aria-hidden="true"/>}
-      {paused ? (isEnglish ? 'Play previews' : 'Riproduci anteprime') : (isEnglish ? 'Pause previews' : 'Pausa anteprime')}
+    {hasVideo && <button type="button" className="preview-playback" aria-pressed={paused || blocked} onClick={() => { if (blocked) { retry(); setUserPaused(false); } else setUserPaused(!paused); }}>
+      {paused || blocked ? <Play size={15} aria-hidden="true"/> : <Pause size={15} aria-hidden="true"/>}
+      {paused || blocked ? (isEnglish ? 'Play previews' : 'Riproduci anteprime') : (isEnglish ? 'Pause previews' : 'Pausa anteprime')}
     </button>}
     <figcaption className="sr-only">{isEnglish ? 'Desktop and mobile previews of the published website.' : 'Anteprime desktop e mobile del sito pubblicato.'}</figcaption>
   </figure>;

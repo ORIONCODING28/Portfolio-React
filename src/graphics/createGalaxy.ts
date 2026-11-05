@@ -1,3 +1,4 @@
+import { bindSceneRecovery } from './bindSceneRecovery';
 import * as THREE from 'three';
 import { fitGalaxyCamera, getGalaxyPointScale } from './fitGalaxyCamera';
 
@@ -33,6 +34,7 @@ class AngularGalaxy implements GalaxyController {
   private disposed = false;
   private resizeObserver: ResizeObserver;
   private intersectionObserver: IntersectionObserver;
+  private unbindRecovery: () => void;
 
   constructor(host: HTMLElement, dark: boolean, paused: boolean) {
     this.host = host;
@@ -50,6 +52,7 @@ class AngularGalaxy implements GalaxyController {
     }, { threshold: .05 });
     this.intersectionObserver.observe(host);
     document.addEventListener('visibilitychange', this.sync);
+    this.unbindRecovery = bindSceneRecovery(this.renderer.domElement, this.sync);
     this.renderer.render(this.scene, this.camera);
     this.sync();
   }
@@ -68,7 +71,7 @@ class AngularGalaxy implements GalaxyController {
     const pixelRatio = Math.min(window.devicePixelRatio, this.compactMedia.matches ? 1.5 : 2);
     this.renderer.setPixelRatio(pixelRatio);
     this.particleProjection.value = getGalaxyPointScale(this.camera, this.host.clientHeight, pixelRatio);
-    this.renderer.setSize(this.host.clientWidth, this.host.clientHeight);
+    this.renderer.setSize(this.host.clientWidth, this.host.clientHeight, false);
     this.renderer.render(this.scene, this.camera);
   };
 
@@ -76,7 +79,7 @@ class AngularGalaxy implements GalaxyController {
     if (this.animationId !== null) cancelAnimationFrame(this.animationId);
     this.animationId = null;
     this.lastFrameTime = null;
-    if (!this.disposed && !this.paused && this.visible && !document.hidden) {
+    if (!this.disposed && !this.paused && this.visible && !document.hidden && !this.renderer.getContext().isContextLost()) {
       this.animationId = requestAnimationFrame(this.animate);
     }
   };
@@ -102,6 +105,7 @@ class AngularGalaxy implements GalaxyController {
     this.resizeObserver.disconnect();
     this.intersectionObserver.disconnect();
     document.removeEventListener('visibilitychange', this.sync);
+    this.unbindRecovery();
     this.scene.traverse(object => {
       if (object instanceof THREE.Points || object instanceof THREE.LineSegments) {
         object.geometry.dispose();
@@ -214,7 +218,7 @@ class AngularGalaxy implements GalaxyController {
       powerPreference: 'high-performance',
       alpha: true
     });
-    this.renderer.setSize(width, height);
+    this.renderer.setSize(width, height, false);
     this.renderer.setClearColor(0x000000, 0);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, this.compactMedia.matches ? 1.5 : 2));
 

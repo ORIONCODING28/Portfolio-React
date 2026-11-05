@@ -21,7 +21,6 @@ export function AboutPage() {
   const step = steps[selected];
   const go = (index: number) => setSelected(cyclePage(index, steps.length));
   useEffect(() => {
-    if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
     const animation = copyPanel.current?.animate([{ opacity: 0, transform: 'translateX(18px)' }, { opacity: 1, transform: 'translateX(0)' }], { duration: 430, easing: 'cubic-bezier(.16,1,.3,1)' });
     return () => animation?.cancel();
   }, [selected]);

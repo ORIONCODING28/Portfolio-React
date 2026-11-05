@@ -1,11 +1,10 @@
 import { useEffect, type RefObject } from 'react';
 
-/** One-time section entrances. Unenhanced and reduced-motion content stays visible. */
+/** One-time section entrances. Content stays visible without enhancement. */
 export function useHomeMotion(scope: RefObject<HTMLDivElement | null>) {
   useEffect(() => {
     const root = scope.current;
     if (!root || !('IntersectionObserver' in window)) return;
-    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
     const compact = matchMedia('(max-width: 760px), (pointer: coarse)');
     const active = new Map<Element, Animation>();
     const finish = () => { active.forEach(animation => animation.finish()); active.clear(); };
@@ -13,7 +12,7 @@ export function useHomeMotion(scope: RefObject<HTMLDivElement | null>) {
       for (const entry of entries) {
         if (!entry.isIntersecting) continue;
         observer.unobserve(entry.target);
-        if (reduced.matches || document.hidden) continue;
+        if (document.hidden) continue;
         const element = entry.target as HTMLElement;
         const sideways = element.dataset.homeReveal === 'path';
         const distance = compact.matches ? 7 : sideways ? 18 : 14;
@@ -37,13 +36,11 @@ export function useHomeMotion(scope: RefObject<HTMLDivElement | null>) {
         if (element) active.get(element)?.finish();
       }
     };
-    reduced.addEventListener('change', finish);
     document.addEventListener('visibilitychange', visibility);
     root.addEventListener('focusin', focus);
     return () => {
       observer.disconnect();
       active.forEach(animation => animation.cancel());
-      reduced.removeEventListener('change', finish);
       document.removeEventListener('visibilitychange', visibility);
       root.removeEventListener('focusin', focus);
     };

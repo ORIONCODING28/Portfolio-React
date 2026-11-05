@@ -9,7 +9,8 @@
 .technology-express img { padding:3px; background:#fff; border-radius:3px }
 .technology-item:focus-visible { outline:2px solid var(--accent); outline-offset:2px }
 .technology-marquee[data-running="true"][data-paused="false"] .technology-track { animation-play-state:running }
-.technology-row:hover .technology-track,.technology-row[data-keyboard-active="true"] .technology-track { animation-play-state:paused !important }
+.technology-row[data-keyboard-active="true"] .technology-track { animation-play-state:paused !important }
+@media(hover:hover) and (pointer:fine) { .technology-row:hover .technology-track { animation-play-state:paused !important } }
 .technology-marquee .journey-stage-modal p { margin-top:20px; font-size:1rem; line-height:1.65 }
 .technology-marquee .journey-stage-modal-title { display:flex; align-items:center; gap:14px }
 .technology-modal-icon { width:36px; height:36px; flex:none; object-fit:contain }
@@ -20,10 +21,4 @@
   .technology-group { gap:30px; padding-right:30px }
   .technology-item { gap:12px; font-size:1.15rem; min-height:52px }
   .technology-item img { width:32px; height:32px }
-}
-@media(prefers-reduced-motion:reduce) {
-  .technology-track { animation:none }
-  .technology-row { overflow-x:auto; scrollbar-width:thin }
-  .technology-group { padding-inline:20px }
-  .technology-group[aria-hidden="true"] { display:none }
 }

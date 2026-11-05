@@ -1,3 +1,4 @@
+import { bindSceneRecovery } from './bindSceneRecovery';
 import * as THREE from 'three';
 import { journeyProgress, journeyActiveStage } from './journeyTimeline';
 
@@ -55,7 +56,9 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
       varying float intensity;
       void main(){
         float distance=phase-progress;
-        float wave=exp(-pow(distance/.085,2.));
+        // GLSL pow is undefined for a negative base, even with exponent 2.
+        float normalizedDistance=distance/.085;
+        float wave=exp(-normalizedDistance*normalizedDistance);
         intensity=brightness*(.28+wave*1.25*trail);
         gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);
         gl_PointSize=max(1.,size*projection);
@@ -94,7 +97,6 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
   }
   const nodePhases=nodes.map(node=>node.phase);
   let selected: number | null=null;
-  const motion=window.matchMedia('(prefers-reduced-motion: reduce)');
   let visible=false, frame=0, last=0, elapsed=0;
   const updateSequence=()=>{
     const progress=journeyProgress(elapsed,nodePhases);
@@ -120,7 +122,7 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
   const render=()=>renderer.render(scene,camera);
   const tick=(now:number)=>{
     frame=0;
-    if(!visible || document.hidden || motion.matches || selected!==null)return;
+    if(!visible || document.hidden || renderer.getContext().isContextLost() || selected!==null)return;
     if(now-last>=1000/30){
       const delta=last ? Math.min((now-last)/1000,.1) : 0; elapsed+=delta; last=now;
       updateSequence();
@@ -130,14 +132,14 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
   };
   const sync=()=>{
     cancelAnimationFrame(frame); frame=0; last=0;
-    if(visible&&!document.hidden&&!motion.matches&&selected===null)frame=requestAnimationFrame(tick);
-    else if(visible&&!document.hidden){updateSequence();render();}
+    if(visible&&!document.hidden&&!renderer.getContext().isContextLost()&&selected===null)frame=requestAnimationFrame(tick);
+    else if(visible&&!document.hidden&&!renderer.getContext().isContextLost()){updateSequence();render();}
   };
   const resize=()=>{
     const width=host.clientWidth, height=host.clientHeight;
     if(!width||!height)return;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
-    renderer.setSize(width,height);
+    renderer.setSize(width,height,false);
     const aspect=width/height; camera.left=-9.4; camera.right=10.6; camera.top=10/aspect; camera.bottom=-camera.top; camera.updateProjectionMatrix();
     uniforms.projection.value=width*renderer.getPixelRatio()/20;
     onLayout(nodes.map(({position})=>({x:(position.x-camera.left)/(camera.right-camera.left)*100,y:(camera.top-position.y)/(camera.top-camera.bottom)*100})));
@@ -151,7 +153,8 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
     if(visible)updateSequence(); else onStage(null);
     sync();
   },{threshold:[0,.4],rootMargin:'0px 0px -6% 0px'}); observer.observe(host);
-  document.addEventListener('visibilitychange',sync); motion.addEventListener('change',sync);
+  document.addEventListener('visibilitychange',sync);
+  const unbindRecovery=bindSceneRecovery(renderer.domElement,sync);
   return {
     select(index) {
       if(index!==null && (!Number.isInteger(index)||index<0||index>=nodes.length))return;
@@ -167,7 +170,7 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
     },
     dispose(){
     cancelAnimationFrame(frame); resizeObserver.disconnect(); observer.disconnect();
-    document.removeEventListener('visibilitychange',sync); motion.removeEventListener('change',sync);
+    document.removeEventListener('visibilitychange',sync); unbindRecovery();
     geometries.forEach(value=>value.dispose()); materials.forEach(value=>value.dispose()); textures.forEach(value=>value.dispose());
     renderer.dispose(); renderer.forceContextLoss(); renderer.domElement.remove();
     },

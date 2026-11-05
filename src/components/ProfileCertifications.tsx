@@ -61,7 +61,7 @@ export function ProfileCertifications() {
     const logical=cyclePage(currentPage.current,count);
     const physical=Math.round(element.scrollLeft/size);
     if(physical<count||physical>=count*2)element.scrollTo({left:(count+logical)*size,behavior:'instant'});
-    element.scrollTo({left:(count+logical+delta)*size,behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});
+    element.scrollTo({left:(count+logical+delta)*size,behavior:'smooth'});
   };
   const startDrag=(event:PointerEvent<HTMLDivElement>)=>{
     if(event.pointerType!=='mouse'||event.button!==0||!cyclic)return;

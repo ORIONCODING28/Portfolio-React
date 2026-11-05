@@ -19,7 +19,6 @@ export function Navbar() {
   const close = () => {
     const modal=dialog.current;
     if(!modal?.open||exitAnimation.current)return;
-    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){modal.close();return;}
     const animation=modal.animate([{transform:'translateX(0)'},{transform:'translateX(100%)'}],{duration:180,easing:'ease-in',fill:'forwards'});
     exitAnimation.current=animation;
     void animation.finished.then(()=>{if(modal.isConnected&&modal.open)modal.close();}).catch(()=>{/* Cancellation is expected during cleanup. */});

@@ -1,9 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { RefObject } from 'react';
 import { getPreviewCorrectionRate } from '../domain/previewPlayback';
 
 /** One clock and visibility boundary for the desktop/phone pair. No render loop. */
 export function usePreviewPlayback(container: RefObject<HTMLDivElement | null>, paused: boolean, mediaKey: string) {
+  const [blocked, setBlocked] = useState(false);
+  const retry = useRef<() => void>(() => {});
   useEffect(() => {
     const host = container.current;
     if (!host) return;
@@ -20,6 +22,9 @@ export function usePreviewPlayback(container: RefObject<HTMLDivElement | null>, 
       if (near && !paused && !document.hidden) {
         for (const video of videos) {
           if (!video.getAttribute('src')) {
+            video.muted = true;
+            video.defaultMuted = true;
+            video.playsInline = true;
             video.preload = 'auto';
             video.src = video.dataset.previewSource!;
             video.load();
@@ -31,8 +36,10 @@ export function usePreviewPlayback(container: RefObject<HTMLDivElement | null>, 
       starting = true;
       void Promise.all(videos.map(video => video.play())).then(() => {
         starting = false;
+        if (disposed) return;
+        setBlocked(false);
         if (!wanted()) stop();
-      }).catch(() => { starting = false; stop(); });
+      }).catch(() => { starting = false; stop(); if (!disposed) setBlocked(true); });
     };
     const restart = () => {
       stop();
@@ -43,6 +50,8 @@ export function usePreviewPlayback(container: RefObject<HTMLDivElement | null>, 
     const onscreen = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); });
     nearby.observe(host); onscreen.observe(host);
     document.addEventListener('visibilitychange', sync);
+    window.addEventListener('pageshow', sync);
+    retry.current = sync;
     for (const video of videos) {
       video.addEventListener('canplay', sync);
       video.addEventListener('seeked', sync);
@@ -67,6 +76,8 @@ export function usePreviewPlayback(container: RefObject<HTMLDivElement | null>, 
       window.clearInterval(clock);
       nearby.disconnect(); onscreen.disconnect();
       document.removeEventListener('visibilitychange', sync);
+      window.removeEventListener('pageshow', sync);
+      retry.current = () => {};
       for (const video of videos) {
         video.removeEventListener('canplay', sync);
         video.removeEventListener('seeked', sync);
@@ -76,4 +87,5 @@ export function usePreviewPlayback(container: RefObject<HTMLDivElement | null>, 
       stop();
     };
   }, [container, paused, mediaKey]);
+  return { blocked, retry: () => retry.current() };
 }

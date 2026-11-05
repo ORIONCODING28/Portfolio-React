@@ -1,3 +1,4 @@
+import { bindSceneRecovery } from './bindSceneRecovery';
 import { publicAsset } from '../domain/deployment.ts';
 import * as T from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -13,7 +14,7 @@ export interface ProfileModelController extends DeviceController { setStage(inde
 export function createProfileModel(initialHost: HTMLElement, initialStage: number, initialDark: boolean, onReady: () => void, onError: () => void, onLoading: () => void): ProfileModelController {
   let host = initialHost, dark = initialDark, disposed = false, visible = false, expanded = false, requested = 0, frame = 0, previous = 0, elapsed = 0, interacted = false, current: T.Group | null = null, entrance = 0, currentStage = initialStage;
   let preload: ReturnType<typeof setTimeout> | undefined;
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)'), coarse = matchMedia('(pointer: coarse)');
+  const coarse = matchMedia('(pointer: coarse)');
   const scene = new T.Scene(), background = new T.Scene(), camera = new T.PerspectiveCamera(32, 1, .1, 80);
   const renderer = new T.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'low-power' });
   renderer.setClearColor(0, 0); renderer.toneMapping = T.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.1; renderer.autoClear = false;
@@ -34,7 +35,7 @@ export function createProfileModel(initialHost: HTMLElement, initialStage: numbe
   function release(object: T.Object3D) {
     const geometries = new Set<T.BufferGeometry>(), materials = new Set<T.Material>(), textures = new Set<T.Texture>();
     object.traverse(value => { if (!(value instanceof T.Mesh)) return; geometries.add(value.geometry); (Array.isArray(value.material) ? value.material : [value.material]).forEach(material => { if (material === accent) return; materials.add(material); Object.values(material).forEach(property => { if (property instanceof T.Texture) textures.add(property); }); }); });
-    geometries.forEach(g => g.dispose()); materials.forEach(m => m.dispose()); textures.forEach(t => { t.dispose(); if (t.image instanceof ImageBitmap) t.image.close(); });
+    geometries.forEach(g => g.dispose()); materials.forEach(m => m.dispose()); textures.forEach(t => { t.dispose(); if (typeof ImageBitmap !== 'undefined' && t.image instanceof ImageBitmap) t.image.close(); });
   }
   function screenTexture() {
     const canvas = createAppointmentCanvas();
@@ -109,21 +110,21 @@ export function createProfileModel(initialHost: HTMLElement, initialStage: numbe
     const request = ++requested; onLoading(); clearTimeout(preload);
     try {
       const next = await object(index); if (disposed || request !== requested) return;
-      root.clear(); currentStage = index; current = next; root.add(next); entrance = reduced.matches ? 1 : 0; interacted = false;
+      root.clear(); currentStage = index; current = next; root.add(next); entrance = 0; interacted = false;
       renderer.domElement.setAttribute('aria-label', `${objectNames[index]} 3D`); resize(); onReady(); sync();
       preload = setTimeout(() => { if (!disposed) void object((index + 1) % 7).catch(() => { /* Retry when this stage is selected. */ }); }, 650);
     } catch { if (!disposed && request === requested) onError(); }
   }
-  function render() { if (disposed || !visible || document.hidden) return; renderer.clear(); renderer.render(background, camera); renderer.clearDepth(); renderer.render(scene, camera); }
+  function render() { if (disposed || !visible || document.hidden || renderer.getContext().isContextLost()) return; renderer.clear(); renderer.render(background, camera); renderer.clearDepth(); renderer.render(scene, camera); }
   function tick(now: number) {
-    frame = 0; if (disposed || !visible || document.hidden) return;
+    frame = 0; if (disposed || !visible || document.hidden || renderer.getContext().isContextLost()) return;
     if (now - previous > 32) { const dt = Math.min((now - previous) / 1000, .05); previous = now; elapsed += dt;
-      if (current) { entrance = Math.min(1, entrance + dt / .55); const remainder = (1 - entrance) ** 3; root.position.y = -remainder * .12 + (!interacted && !reduced.matches ? Math.sin(elapsed * .7) * .025 : 0); root.rotation.y = remainder * .16; }
+      if (current) { entrance = Math.min(1, entrance + dt / .55); const remainder = (1 - entrance) ** 3; root.position.y = -remainder * .12 + (!interacted ? Math.sin(elapsed * .7) * .025 : 0); root.rotation.y = remainder * .16; }
       render();
     }
-    if (!reduced.matches && !interacted) frame = requestAnimationFrame(tick);
+    if (!interacted) frame = requestAnimationFrame(tick);
   }
-  function sync() { if (visible && !document.hidden && !disposed) { render(); if (!frame && !reduced.matches && !interacted) { previous = performance.now(); frame = requestAnimationFrame(tick); } } else { cancelAnimationFrame(frame); frame = 0; } }
+  function sync() { if (visible && !document.hidden && !disposed && !renderer.getContext().isContextLost()) { render(); if (!frame && !interacted) { previous = performance.now(); frame = requestAnimationFrame(tick); } } else { cancelAnimationFrame(frame); frame = 0; } }
   function interaction() { interacted = true; root.rotation.y = 0; root.position.y = 0; cancelAnimationFrame(frame); frame = 0; }
   controls.addEventListener('start', interaction); controls.addEventListener('change', render);
   function resetView() { camera.position.copy(home); controls.target.set(0, 0, 0); controls.update(); render(); }
@@ -150,10 +151,11 @@ export function createProfileModel(initialHost: HTMLElement, initialStage: numbe
   const sizeObserver = new ResizeObserver(resize), observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); }); sizeObserver.observe(host); observer.observe(host);
   function setTheme(value: boolean) { dark = value; accent.color.set(value ? 0x00b9d1 : 0x0755c9); rim.color.set(value ? 0x00d9f5 : 0xffffff); rim.intensity = value ? .8 : .45; glow.material.uniforms.dark.value = value ? 1 : 0; renderer.toneMappingExposure = value ? 1.1 : 1.0; render(); }
   function attachTo(target: HTMLElement) { if (disposed) return; sizeObserver.unobserve(host); observer.unobserve(host); host = target; host.append(renderer.domElement); sizeObserver.observe(host); observer.observe(host); resize(); }
-  document.addEventListener('visibilitychange', sync); reduced.addEventListener('change', sync); coarse.addEventListener('change', pointerChange); resize(); setTheme(dark); void setStage(initialStage);
+  const unbindRecovery = bindSceneRecovery(renderer.domElement, sync);
+  document.addEventListener('visibilitychange', sync); coarse.addEventListener('change', pointerChange); resize(); setTheme(dark); void setStage(initialStage);
   return { setStage: index => { void setStage(index); }, setTheme, attachTo, resetView, setTouchInteraction, dispose() {
     disposed = true; ++requested; clearTimeout(preload); cancelAnimationFrame(frame); sizeObserver.disconnect(); observer.disconnect();
-    document.removeEventListener('visibilitychange', sync); reduced.removeEventListener('change', sync); coarse.removeEventListener('change', pointerChange); renderer.domElement.removeEventListener('keydown', keydown);
+    document.removeEventListener('visibilitychange', sync); unbindRecovery(); coarse.removeEventListener('change', pointerChange); renderer.domElement.removeEventListener('keydown', keydown);
     controls.removeEventListener('start', interaction); controls.removeEventListener('change', render); controls.dispose(); resources.forEach(release); resources.clear(); cache.clear(); accent.dispose(); glow.geometry.dispose(); glow.material.dispose(); environment.dispose(); scene.clear(); background.clear(); renderer.dispose(); renderer.forceContextLoss(); renderer.domElement.remove();
   } };
 }

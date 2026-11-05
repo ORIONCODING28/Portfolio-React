@@ -1114,13 +1114,6 @@ input[aria-invalid=true],textarea[aria-invalid=true] {
   }
 }
 
-@media(prefers-reduced-motion:reduce) {
-  *,*::before,*::after {
-    animation:none!important;
-    transition:none!important;
-    scroll-behavior:auto!important
-  }
-}
 
 
 /* Page dividers bleed to the viewport edges without widening the content or scroll area. */
