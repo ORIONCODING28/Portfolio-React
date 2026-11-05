@@ -1,0 +1,10 @@
+.journey-stage-modal { inset:0; margin:auto; width:min(520px,calc(100% - 48px)); max-width:none; max-height:calc(100dvh - 48px); padding:24px; border:1px solid var(--accent); border-radius:12px; background:var(--bg); color:var(--text); overflow:auto }
+.journey-stage-modal::backdrop { background:rgba(0,0,0,.82) }
+.journey-stage-modal-header { display:flex; align-items:center; justify-content:space-between; gap:20px }
+.journey-stage-modal .journey-stage-modal-title { margin:0; font-family:'Space Grotesk',sans-serif; color:var(--accent); font-size:2rem; min-width:0; line-height:1.2; font-weight:700; overflow-wrap:anywhere }
+.journey-stage-modal .icon-button { flex-shrink:0 }
+.home-journey .journey-stage-modal p { margin-top:16px; max-width:none; font-size:1rem; line-height:1.65 }
+@media(max-width:760px) { .journey-stage-modal { width:calc(100% - 24px); max-height:calc(100dvh - 24px); padding:20px; border-radius:9px } }
+
+.journey-stage-modal .modal-close-button,
+.journey-stage-modal .modal-close-button:hover { color:var(--accent); border-color:var(--accent) }

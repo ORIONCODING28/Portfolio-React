@@ -1,0 +1,19 @@
+HP Omen Laptop by Fadi (fadiammar1)
+https://sketchfab.com/3d-models/hp-omen-laptop-cb33442e53e6404a9439f320401da1d9
+
+These models are licensed under Creative Commons Attribution 4.0 International:
+https://creativecommons.org/licenses/by/4.0/
+
+Downloaded from the authors' Sketchfab pages on 2026-10-27.
+Adaptations: scale and centering, display UV mapping and replacement with portfolio content,
+shared lighting and interactive orbit camera.
+The models' original creators are not associated with this portfolio.
+
+
+iPhone 15 Pro by Sketcher (jnanbr07)
+https://sketchfab.com/3d-models/iphone-15-pro-9e045e469d514fea9dda2ccd161f5fa3
+Creative Commons Attribution 4.0 International
+https://creativecommons.org/licenses/by/4.0/
+Adaptations: orientation, scale, centering, display UV mapping and portfolio screen content.
+
+Web optimization (2026-11-04): lossless Meshopt geometry compression, duplicate accessor/texture removal, and lossless WebP textures at original resolution. Original source files retained outside public assets.

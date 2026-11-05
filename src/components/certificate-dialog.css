@@ -1,0 +1,9 @@
+#certificate-preview { width:min(1100px,calc(100% - 40px)) }
+#certificate-preview .site-dialog-body { display:flex; flex-direction:column; gap:22px }
+.certificate-details { display:grid; gap:16px; line-height:1.65; color:var(--muted) }
+.certificate-issued { color:var(--text) }
+.certificate-details .button { justify-self:start; min-height:44px }
+@media(max-width:639px) { #certificate-preview { width:calc(100% - 16px); max-height:calc(100dvh - 16px); padding:16px } #certificate-preview .site-dialog-header h2 { font-size:1.55rem } }
+.certificate-preview-image { flex:0 0 auto; min-width:0; width:100% }
+.certificate-preview-image img { display:block; width:100%; height:auto; max-height:48dvh; object-fit:contain; margin-inline:auto }
+@media(max-width:639px) { .certificate-preview-image img { max-height:38dvh } }

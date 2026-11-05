@@ -1,0 +1,48 @@
+.terminal-modal { inset:0; margin:auto; width:min(960px,calc(100% - 48px)); max-width:none; max-height:calc(100dvh - 48px); padding:24px; border:1px solid var(--control); border-radius:12px; background:var(--bg); color:var(--text); overflow:hidden }
+.terminal-modal[open] { display:flex; flex-direction:column; gap:20px }
+.terminal-modal::backdrop { background:rgba(0,0,0,.82) }
+.terminal-modal-header { display:flex; align-items:flex-start; justify-content:space-between; gap:24px; flex-shrink:0 }
+.terminal-modal-header h2 { margin:0; font-family:'Space Grotesk',sans-serif; font-size:clamp(1.8rem,3vw,2.5rem); line-height:1.15; font-weight:700 }
+.terminal-modal-header p { margin-top:8px; color:var(--muted); font-size:.95rem }
+.terminal-modal-header .icon-button { flex-shrink:0 }
+.terminal-modal .terminal-window { display:flex; flex-direction:column; min-height:0 }
+.terminal-modal .terminal-toolbar,.terminal-modal .terminal-form { flex-shrink:0 }
+.terminal-modal .terminal-output { min-height:0; height:min(420px,48dvh); flex:1 1 auto; max-height:none }
+.terminal-modal .terminal-form input { min-width:0 }
+@media(max-width:760px) {
+  .terminal-modal { width:calc(100% - 24px); max-height:calc(100dvh - 24px); padding:14px; border-radius:9px }
+  .terminal-modal[open] { gap:16px }
+  .terminal-modal-header { gap:12px }
+  .terminal-modal-header h2 { font-size:1.8rem }
+  .terminal-modal-header p { font-size:.82rem; margin-top:5px }
+  .terminal-modal .terminal-output { height:42dvh }
+}
+@media(max-height:600px) {
+  .terminal-modal { max-height:calc(100dvh - 16px); padding:12px }
+  .terminal-modal[open] { gap:8px }
+  .terminal-modal-header h2 { font-size:1.5rem }
+  .terminal-modal-header p { margin-top:0 }
+  .terminal-modal .terminal-output { height:30dvh }
+}
+
+.terminal-form input,
+.terminal-form input:hover,
+.terminal-form input:focus {
+  border-color:var(--accent); background:transparent; box-shadow:none;
+}
+.terminal-form input:focus-visible {
+  outline:2px solid var(--accent); outline-offset:-2px;
+}
+.terminal-form .terminal-submit,
+.terminal-form .terminal-submit:hover,
+.terminal-form .terminal-submit:active {
+  background:transparent; border:1px solid var(--accent); color:var(--accent);
+  box-shadow:none; transform:none; transition:none;
+}
+
+.terminal-modal .terminal-output { scrollbar-width:none }
+.terminal-modal .terminal-output::-webkit-scrollbar { display:none }
+
+.terminal-modal-header>div { min-width:0 }
+.terminal-modal-header h2 { overflow-wrap:anywhere }
+@media(max-width:760px) { .terminal-modal .terminal-form input { font-size:1rem } }

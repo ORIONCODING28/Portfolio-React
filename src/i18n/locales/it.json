@@ -1,0 +1,252 @@
+{
+  "NAVBAR": {
+    "HOME": "Home",
+    "ABOUT": "Chi Sono",
+    "PROJECTS": "Progetti",
+    "CERTIFICATIONS": "Certificazioni",
+    "CONTACT": "Contatti"
+  },
+  "HOME": {
+    "HERO": {
+      "LABEL": "FULL-STACK DEVELOPER",
+      "DESCRIPTION": "Progetto e sviluppo applicazioni web e mobile moderne, performanti e ben strutturate. Mi occupo dell’intero processo di sviluppo, trasformando idee in soluzioni digitali affidabili, scalabili e orientate all’esperienza utente.",
+      "SKILLS": "Frontend • Backend • Architettura • Performance • UI/UX",
+      "STATS": {
+        "YEARS": "Anni Esperienza",
+        "PROJECTS": "Progetti",
+        "CODEQUALITY": "Qualità del Codice"
+      }
+    },
+    "PORTFOLIO": {
+      "LABEL": "PORTFOLIO",
+      "TITLE": "Progetti in Evidenza",
+      "DESCRIPTION": "I miei lavori più recenti e significativi",
+      "VIEW_PROJECT": "Vedi Progetto",
+      "VIEW_ALL": "Vedi Tutti i Progetti"
+    },
+    "EXPERIENCE": {
+      "LABEL": "ESPERIENZE",
+      "TITLE": "Percorso Professionale",
+      "QUOTE": "Il web non è solo estetica. È performance, accessibilità e architettura. Ed è così che mi piace costruirlo."
+    }
+  },
+  "ABOUT": {
+    "HERO": {
+      "LABEL": "CHI SONO",
+      "TITLE": "Giuseppe Cairone",
+      "SUBTITLE": "Full-Stack Developer & Tech Enthusiast"
+    },
+    "SECTION": {
+      "LABEL": "LA MIA STORIA",
+      "TITLE": "Percorso e Passione",
+      "TEXT1": "Sono un sviluppatore web appassionato con una forte dedizione alla creazione di esperienze digitali eccezionali. La mia filosofia è semplice: il web non è solo estetica, è performance, accessibilità e architettura solida.",
+      "TEXT2": "Ogni progetto è un'opportunità per imparare qualcosa di nuovo e spingermi oltre i miei limiti. Mi piace affrontare sfide complesse e trovare soluzioni eleganti che uniscano funzionalità e design.",
+      "TEXT3": "Quando non scrivo codice, mi dedico all'apprendimento continuo delle nuove tecnologie e best practices del settore, mantenendomi sempre aggiornato sulle ultime tendenze del web development."
+    },
+    "HIGHLIGHTS": {
+      "CLEAN_CODE": {
+        "TITLE": "Clean Code",
+        "TEXT": "Scrivo codice pulito, manutenibile e ben documentato"
+      },
+      "PERFORMANCE": {
+        "TITLE": "Performance",
+        "TEXT": "Ottimizzazione e velocità sono sempre priorità"
+      },
+      "USER_CENTERED": {
+        "TITLE": "User-Centered",
+        "TEXT": "L'esperienza utente guida ogni decisione"
+      },
+      "INNOVATION": {
+        "TITLE": "Innovazione",
+        "TEXT": "Sempre alla ricerca di soluzioni creative"
+      }
+    },
+    "TIMELINE": {
+      "LABEL": "ESPERIENZA",
+      "TITLE": "Percorso Professionale"
+    },
+    "EDUCATION": {
+      "LABEL": "FORMAZIONE",
+      "TITLE": "Percorso Formativo"
+    },
+    "CTA": {
+      "TITLE": "Lavoriamo Insieme",
+      "DESCRIPTION": "Hai un'idea che vuoi trasformare in realtà? Che tu stia cercando di creare un nuovo sito web, sviluppare un'applicazione o semplicemente migliorare la tua presenza digitale, sono qui per aiutarti. Usa il form qui sotto o contattami direttamente sui social. Rispondo sempre entro 24 ore e sarò felice di discutere del tuo progetto senza alcun impegno.",
+      "CONTACT": "Contattami",
+      "PROJECTS": "Vedi Progetti"
+    }
+  },
+  "PROJECTS": {
+    "HERO": {
+      "LABEL": "I MIEI LAVORI",
+      "TITLE": "Codice, ",
+      "HIGHLIGHT": "Creatività e Visione",
+      "DESCRIPTION": "Un'esplorazione dei miei progetti più significativi, dove la tecnica incontra l'esigenza dell'utente per creare valore reale."
+    },
+    "FILTERS": {
+      "ALL": "Tutti",
+      "WEB": "Web Development",
+      "MOBILE": "Mobile",
+      "FULLSTACK": "Full Stack"
+    },
+    "VIEW_PROJECT": "Dettagli Progetto",
+    "NO_PROJECTS": "Nessun progetto trovato per questa categoria."
+  },
+  "PROJECT_DETAIL": {
+    "BACK": "Torna ai progetti",
+    "BREADCRUMB": {
+      "PROJECTS": "Progetti"
+    },
+    "DESCRIPTION": "Descrizione del progetto",
+    "FEATURES_INTRO": "Le caratteristiche principali includono:",
+    "DETAILS": {
+      "TITLE": "Dettagli tecnici",
+      "CATEGORY": "Categoria",
+      "DATE": "Completato",
+      "TECHNOLOGIES": "Tecnologie utilizzate"
+    },
+    "SHARE": {
+      "TITLE": "Condividi",
+      "LINKEDIN": "Condividi su LinkedIn",
+      "WHATSAPP": "Condividi su WhatsApp",
+      "COPY": "Copia link",
+      "COPIED": "Link copiato!"
+    }
+  },
+  "CERTIFICATIONS": {
+    "HERO": {
+      "LABEL": "CERTIFICAZIONI",
+      "TITLE": "Certificazioni e Competenze",
+      "DESCRIPTION": "Certificazioni professionali e competenze verificate nel web development, con expertise consolidata in tecnologie moderne"
+    },
+    "SKILLS": {
+      "LABEL": "Competenze",
+      "TITLE": "Il Mio Stack Tecnologico",
+      "FRONTEND": "Frontend",
+      "BACKEND": "Backend",
+      "DATABASE": "Database",
+      "MOBILE": "Mobile",
+      "FRAMEWORK": "Frameworks"
+    },
+    "SECTION": {
+      "LABEL": "CERTIFICAZIONI",
+      "TITLE": "Certificazioni",
+      "DETAILS": "Dettagli"
+    },
+    "ISSUED_AT": "Rilasciata il:",
+    "VIEW_CERTIFICATE": "Vedi Certificato",
+    "CERTS": {
+      "CERT_1": {
+        "TITLE": "HTML Essentials",
+        "DESCRIPTION": "Certificazione in HTML5 che attesta la conoscenza delle strutture di markup, degli elementi semantici, dei moduli, delle tabelle, degli attributi e delle migliori pratiche per lo sviluppo di contenuti web accessibili e semanticamente corretti."
+      },
+      "CERT_2": {
+        "TITLE": "Pandas",
+        "DESCRIPTION": "Libreria Python per la manipolazione e l'analisi di dati strutturati tramite DataFrame. Essenziale per il data cleaning, la trasformazione di dataset complessi e la preparazione dei dati."
+      }
+    }
+  },
+  "CONTACT": {
+    "LABEL": "CONTATTI",
+    "HERO": {
+      "LABEL": "CONTATTI",
+      "TITLE_PART1": "Parliamo del tuo",
+      "TITLE_PART2": "Prossimo",
+      "TITLE_PART3": "Grande Progetto",
+      "DESCRIPTION": "Hai un'idea che vuoi trasformare in realtà? Che tu stia cercando di creare un nuovo sito web, sviluppare un'applicazione o semplicemente migliorare la tua presenza digitale, sono qui per aiutarti. Usa il form qui sotto o contattami direttamente sui social. Rispondo sempre entro 24 ore e sarò felice di discutere del tuo progetto senza alcun impegno."
+    },
+    "FORM": {
+      "TITLE": "Invia un Messaggio",
+      "NAME": "Nome Completo",
+      "NAME_PLACEHOLDER": "Il tuo nome",
+      "NAME_ERROR": "Inserisci un nome valido (minimo 2 caratteri)",
+      "EMAIL": "Email",
+      "EMAIL_PLACEHOLDER": "la-tua@email.com",
+      "EMAIL_ERROR": "Inserisci un'email valida",
+      "SUBJECT": "Oggetto",
+      "SUBJECT_PLACEHOLDER": "Oggetto del messaggio",
+      "SUBJECT_ERROR": "Inserisci un oggetto (minimo 3 caratteri)",
+      "MESSAGE": "Messaggio",
+      "MESSAGE_PLACEHOLDER": "Il tuo messaggio...",
+      "MESSAGE_ERROR": "Inserisci un messaggio (minimo 10 caratteri)",
+      "SUBMIT": "Invia Messaggio",
+      "SEND": "Invia Messaggio",
+      "SENDING": "Invio in corso...",
+      "SUCCESS": "Messaggio inviato con successo!",
+      "ERROR": "Si è verificato un errore. Riprova."
+    },
+    "FAQ": {
+      "LABEL": "FAQ",
+      "TITLE": "Domande Frequenti",
+      "SUBTITLE": "FAQ",
+      "Q1": {
+        "QUESTION": "Quanto tempo richiede un progetto?",
+        "ANSWER": "Dipende dalla complessità. Un sito vetrina richiede 2-3 settimane, mentre applicazioni più complesse possono richiedere 1-3 mesi. Dopo un'analisi iniziale, fornisco sempre una stima precisa dei tempi."
+      },
+      "Q2": {
+        "QUESTION": "Come funziona il preventivo?",
+        "ANSWER": "Dopo il primo contatto, organizzo una call per comprendere le tue esigenze. In base ai requisiti, preparo un preventivo dettagliato con tempi e costi. Il preventivo è sempre gratuito e senza impegno."
+      },
+      "Q3": {
+        "QUESTION": "Offri supporto post-lancio?",
+        "ANSWER": "Sì! Offro pacchetti di manutenzione mensile che includono aggiornamenti, backup, monitoraggio delle performance e supporto tecnico. Ogni progetto include anche 30 giorni di supporto gratuito post-lancio."
+      },
+      "Q4": {
+        "QUESTION": "Lavori anche da remoto?",
+        "ANSWER": "Assolutamente sì! Lavoro regolarmente con clienti in tutta Italia e occasionalmente anche all'estero. Utilizzo strumenti di collaborazione moderni per garantire una comunicazione efficace e trasparente durante tutto il progetto."
+      },
+      "Q5": {
+        "QUESTION": "Quali tecnologie usi?",
+        "ANSWER": "Lavoro con Angular, React, Node.js, TypeScript, SCSS e molti altri framework moderni. Scelgo le tecnologie in base alle esigenze specifiche del progetto."
+      },
+      "Q6": {
+        "QUESTION": "Posso avere una consulenza gratuita?",
+        "ANSWER": "Certo! Offro una consulenza iniziale gratuita di 30 minuti per discutere il progetto, capire i tuoi obiettivi e valutare la fattibilità."
+      }
+    }
+  },
+  "FOOTER": {
+    "QUOTE": "Il web non è solo estetica. È performance, accessibilità e architettura. Ed è così che mi piace costruirlo.",
+    "ABOUT": {
+      "TITLE": "Giuseppe Cairone",
+      "DESCRIPTION": "Full-Stack Developer specializzato in applicazioni web moderne e performanti."
+    },
+    "LINKS": {
+      "TITLE": "Navigazione",
+      "HOME": "Home",
+      "ABOUT": "Chi Sono",
+      "PROJECTS": "Progetti",
+      "CONTACT": "Contatti"
+    },
+    "CONTACT": {
+      "TITLE": "Contatti",
+      "EMAIL": "Email",
+      "PHONE": "Telefono",
+      "LOCATION": "Posizione"
+    },
+    "LOCATION": "Caltagirone",
+    "CTA": "Invia Messaggio",
+    "COPYRIGHT": "Tutti i diritti riservati."
+  },
+  "COMMON": {
+    "LOADING": "Caricamento...",
+    "ERROR": "Errore",
+    "SUCCESS": "Successo",
+    "BACK": "Indietro",
+    "NEXT": "Avanti",
+    "CLOSE": "Chiudi",
+    "SAVE": "Salva",
+    "CANCEL": "Annulla",
+    "PRESENT": "Presente",
+    "HOURS": "ore",
+    "VIEW_CV": "Visualizza CV",
+    "LANGUAGE": {
+      "ITALIAN": "Italiano",
+      "ENGLISH": "English",
+      "CHANGE": "Cambia lingua"
+    },
+    "ACCESSIBILITY": {
+      "TOGGLE_NAVIGATION": "Attiva/Disattiva navigazione"
+    }
+  }
+}

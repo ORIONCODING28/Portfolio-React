@@ -1,0 +1,252 @@
+{
+  "NAVBAR": {
+    "HOME": "Home",
+    "ABOUT": "About",
+    "PROJECTS": "Projects",
+    "CERTIFICATIONS": "Certifications",
+    "CONTACT": "Contact"
+  },
+  "HOME": {
+    "HERO": {
+      "LABEL": "FULL-STACK DEVELOPER",
+      "DESCRIPTION": "I design and develop modern, high-performance, and well-structured web and mobile applications. I handle the entire development process, turning ideas into reliable, scalable digital solutions focused on user experience.",
+      "SKILLS": "Frontend • Backend • Architecture • Performance • UI/UX",
+      "STATS": {
+        "YEARS": "Years of Experience",
+        "PROJECTS": "Projects",
+        "CODEQUALITY": "Code Quality"
+      }
+    },
+    "PORTFOLIO": {
+      "LABEL": "PORTFOLIO",
+      "TITLE": "Featured Projects",
+      "DESCRIPTION": "My most recent and significant work",
+      "VIEW_PROJECT": "View Project",
+      "VIEW_ALL": "View All Projects"
+    },
+    "EXPERIENCE": {
+      "LABEL": "EXPERIENCE",
+      "TITLE": "Professional Journey",
+      "QUOTE": "The web is not just aesthetics. It is performance, accessibility, and architecture. And that’s how I like to build it."
+    }
+  },
+  "ABOUT": {
+    "HERO": {
+      "LABEL": "ABOUT ME",
+      "TITLE": "Giuseppe Cairone",
+      "SUBTITLE": "Full-Stack Developer & Tech Enthusiast"
+    },
+    "SECTION": {
+      "LABEL": "MY STORY",
+      "TITLE": "Path and Passion",
+      "TEXT1": "I am a passionate web developer with strong dedication to creating exceptional digital experiences. My philosophy is simple: the web is not just aesthetics, it is performance, accessibility and solid architecture.",
+      "TEXT2": "Every project is an opportunity to learn something new and push beyond my limits. I like to face complex challenges and find elegant solutions that combine functionality and design.",
+      "TEXT3": "When I'm not writing code, I dedicate myself to continuous learning of new technologies and best practices in the industry, always keeping myself updated on the latest web development trends."
+    },
+    "HIGHLIGHTS": {
+      "CLEAN_CODE": {
+        "TITLE": "Clean Code",
+        "TEXT": "I write clean, maintainable and well-documented code"
+      },
+      "PERFORMANCE": {
+        "TITLE": "Performance",
+        "TEXT": "Optimization and speed are always priorities"
+      },
+      "USER_CENTERED": {
+        "TITLE": "User-Centered",
+        "TEXT": "User experience guides every decision"
+      },
+      "INNOVATION": {
+        "TITLE": "Innovation",
+        "TEXT": "Always searching for creative solutions"
+      }
+    },
+    "TIMELINE": {
+      "LABEL": "EXPERIENCE",
+      "TITLE": "Professional Path"
+    },
+    "EDUCATION": {
+      "LABEL": "TRAINING",
+      "TITLE": "Training Path"
+    },
+    "CTA": {
+      "TITLE": "Let’s Work Together",
+      "DESCRIPTION": "Do you have an idea you want to transform into reality? Whether you're looking to create a new website, develop an application or simply improve your digital presence, I'm here to help you. Use the form below or contact me directly on social media. I always respond within 24 hours and I will be happy to discuss your project without any commitment.",
+      "CONTACT": "Contact Me",
+      "PROJECTS": "View Projects"
+    }
+  },
+  "PROJECTS": {
+    "HERO": {
+      "LABEL": "MY WORK",
+      "TITLE": "Code, ",
+      "HIGHLIGHT": "Creativity and Vision",
+      "DESCRIPTION": "An exploration of my most meaningful projects, where technology meets user needs to create real value."
+    },
+    "FILTERS": {
+      "ALL": "All",
+      "WEB": "Web Development",
+      "MOBILE": "Mobile",
+      "FULLSTACK": "Full Stack"
+    },
+    "VIEW_PROJECT": "Project Details",
+    "NO_PROJECTS": "No projects found for this category."
+  },
+  "PROJECT_DETAIL": {
+    "BACK": "Back to Projects",
+    "BREADCRUMB": {
+      "PROJECTS": "Projects"
+    },
+    "DESCRIPTION": "Project description",
+    "FEATURES_INTRO": "Key features include:",
+    "DETAILS": {
+      "TITLE": "Technical details",
+      "CATEGORY": "Category",
+      "DATE": "Completed",
+      "TECHNOLOGIES": "Technologies used"
+    },
+    "SHARE": {
+      "TITLE": "Share",
+      "LINKEDIN": "Share on LinkedIn",
+      "WHATSAPP": "Share on WhatsApp",
+      "COPY": "Copy link",
+      "COPIED": "Link copied!"
+    }
+  },
+  "CERTIFICATIONS": {
+    "HERO": {
+      "LABEL": "CERTIFICATIONS",
+      "TITLE": "Certifications and Skills",
+      "DESCRIPTION": "Professional certifications and verified skills in web development, with solid expertise in modern technologies"
+    },
+    "SKILLS": {
+      "LABEL": "Skills",
+      "TITLE": "My Tech Stack",
+      "FRONTEND": "Frontend",
+      "BACKEND": "Backend",
+      "DATABASE": "Database",
+      "MOBILE": "Mobile",
+      "FRAMEWORK": "Frameworks"
+    },
+    "SECTION": {
+      "LABEL": "CERTIFICATIONS",
+      "TITLE": "Certifications",
+      "DETAILS": "Details"
+    },
+    "ISSUED_AT": "Issued on:",
+    "VIEW_CERTIFICATE": "View Certificate",
+    "CERTS": {
+      "CERT_1": {
+        "TITLE": "HTML Essentials",
+        "DESCRIPTION": "HTML5 certification demonstrating knowledge of markup structures, semantic elements, forms, tables, attributes, and best practices for building accessible and semantically correct web content."
+      },
+      "CERT_2": {
+        "TITLE": "Pandas",
+        "DESCRIPTION": "Python library for manipulating and analyzing structured data using DataFrames. Essential for data cleaning, transforming complex datasets, and preparing data."
+      }
+    }
+  },
+  "CONTACT": {
+    "LABEL": "CONTACT",
+    "HERO": {
+      "LABEL": "CONTACT",
+      "TITLE_PART1": "Let’s Talk About Your",
+      "TITLE_PART2": "Next",
+      "TITLE_PART3": "Big Project",
+      "DESCRIPTION": "Do you have an idea you want to turn into reality? Whether you're looking to create a new website, develop an application, or simply improve your digital presence, I’m here to help. Use the form below or contact me directly on social media. I always respond within 24 hours and will be happy to discuss your project with no obligation."
+    },
+    "FORM": {
+      "TITLE": "Send a Message",
+      "NAME": "Full Name",
+      "NAME_PLACEHOLDER": "Your name",
+      "NAME_ERROR": "Enter a valid name (minimum 2 characters)",
+      "EMAIL": "Email",
+      "EMAIL_PLACEHOLDER": "your-email@email.com",
+      "EMAIL_ERROR": "Enter a valid email",
+      "SUBJECT": "Subject",
+      "SUBJECT_PLACEHOLDER": "Message subject",
+      "SUBJECT_ERROR": "Enter a subject (minimum 3 characters)",
+      "MESSAGE": "Message",
+      "MESSAGE_PLACEHOLDER": "Your message...",
+      "MESSAGE_ERROR": "Enter a message (minimum 10 characters)",
+      "SUBMIT": "Send Message",
+      "SEND": "Send Message",
+      "SENDING": "Sending...",
+      "SUCCESS": "Message sent successfully!",
+      "ERROR": "An error occurred. Please try again."
+    },
+    "FAQ": {
+      "LABEL": "FAQ",
+      "TITLE": "Frequently Asked Questions",
+      "SUBTITLE": "FAQ",
+      "Q1": {
+        "QUESTION": "How long does a project take?",
+        "ANSWER": "It depends on complexity. A showcase website usually takes 2–3 weeks, while more complex applications may require 1–3 months. After an initial analysis, I always provide a clear timeline."
+      },
+      "Q2": {
+        "QUESTION": "How does pricing work?",
+        "ANSWER": "After the first contact, I schedule a call to understand your needs. Based on the requirements, I prepare a detailed quote with timelines and costs. Quotes are always free and non-binding."
+      },
+      "Q3": {
+        "QUESTION": "Do you offer post-launch support?",
+        "ANSWER": "Yes! I offer monthly maintenance packages including updates, backups, performance monitoring, and technical support. Every project also includes 30 days of free post-launch support."
+      },
+      "Q4": {
+        "QUESTION": "Do you work remotely?",
+        "ANSWER": "Absolutely! I regularly work with clients throughout Italy and occasionally abroad. I use modern collaboration tools to ensure clear and transparent communication throughout the project."
+      },
+      "Q5": {
+        "QUESTION": "Which technologies do you use?",
+        "ANSWER": "I work with Angular, React, Node.js, TypeScript, SCSS, and many other modern frameworks. Technologies are chosen based on the specific needs of each project."
+      },
+      "Q6": {
+        "QUESTION": "Can I get a free consultation?",
+        "ANSWER": "Of course! I offer a free 30-minute initial consultation to discuss your project, understand your goals, and evaluate feasibility."
+      }
+    }
+  },
+  "FOOTER": {
+    "QUOTE": "The web is not just aesthetics. It is performance, accessibility, and architecture. And that’s how I like to build it.",
+    "ABOUT": {
+      "TITLE": "Giuseppe Cairone",
+      "DESCRIPTION": "Full-Stack Developer specialized in modern and high-performance web applications."
+    },
+    "LINKS": {
+      "TITLE": "Navigation",
+      "HOME": "Home",
+      "ABOUT": "About",
+      "PROJECTS": "Projects",
+      "CONTACT": "Contact"
+    },
+    "CONTACT": {
+      "TITLE": "Contact",
+      "EMAIL": "Email",
+      "PHONE": "Phone",
+      "LOCATION": "Location"
+    },
+    "LOCATION": "Caltagirone",
+    "CTA": "Send Message",
+    "COPYRIGHT": "All rights reserved."
+  },
+  "COMMON": {
+    "LOADING": "Loading...",
+    "ERROR": "Error",
+    "SUCCESS": "Success",
+    "BACK": "Back",
+    "NEXT": "Next",
+    "CLOSE": "Close",
+    "SAVE": "Save",
+    "CANCEL": "Cancel",
+    "PRESENT": "Present",
+    "HOURS": "hours",
+    "VIEW_CV": "View CV",
+    "LANGUAGE": {
+      "ITALIAN": "Italian",
+      "ENGLISH": "English",
+      "CHANGE": "Change language"
+    },
+    "ACCESSIBILITY": {
+      "TOGGLE_NAVIGATION": "Toggle navigation"
+    }
+  }
+}

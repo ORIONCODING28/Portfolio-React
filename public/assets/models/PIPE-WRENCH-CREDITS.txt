@@ -1,0 +1,4 @@
+Pipe Wrench by holgcool
+https://sketchfab.com/3d-models/pipe-wrench-4ed30f2b71a34027a39ed02872d0caff
+CC BY 4.0 https://creativecommons.org/licenses/by/4.0/
+Changes: lossless compression, orientation, selective shader paint recolouring, lighting and controls.

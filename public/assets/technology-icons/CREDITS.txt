@@ -1,0 +1,1 @@
+Technology icons: Devicon (https://devicon.dev/), https://github.com/devicons/devicon. Distributed under the MIT license. Brand names and logos belong to their respective owners. Downloaded 2026-11-04 from icons/<technology>/<technology>-original.svg; original colors preserved.

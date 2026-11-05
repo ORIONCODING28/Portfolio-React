@@ -1,0 +1,3 @@
+.language-options button { gap:7px; padding-inline:10px }
+.language-options img { display:block; width:20px; height:20px; object-fit:contain; flex-shrink:0 }
+.preferences-inline .language-options button[aria-pressed=true] { text-decoration:none }

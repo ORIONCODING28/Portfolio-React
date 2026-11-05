@@ -1,0 +1,202 @@
+.immersive-home .page-container { width:min(1680px,calc(100% - 64px)); max-width:none }
+.immersive-home .home-hero { min-height:0; padding-block:28px 32px; grid-template-columns:1fr 1.1fr; gap:18px }
+.immersive-home .hero-copy h1 { font-size:clamp(2.25rem,3.65vw,3.8rem); line-height:1.01; letter-spacing:-.035em }
+.immersive-home .hero-intro { font-size:1.05rem; line-height:1.5; max-width:44ch; margin-block:14px 22px }
+.immersive-home .hero-copy>.button { min-width:260px; min-height:50px }
+.immersive-home .terminal-link { margin-top:14px }
+.immersive-home .hero-art .galaxy-visual { height:clamp(390px,38vw,510px); min-height:0 }
+.home-capabilities { padding-top:12px; padding-bottom:40px }
+.immersive-home h2 { font-family:'Space Grotesk',sans-serif; font-size:clamp(1.8rem,3.1vw,2.6rem); line-height:1.15; letter-spacing:-.025em; font-weight:700 }
+.home-section-intro { margin-top:10px; font-size:1.1rem }
+.home-capability-stage { margin-top:12px }
+.home-capability-copy { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:30px }
+.home-capability-copy article { min-width:0 }
+.capability-visual { position:relative; width:100%; aspect-ratio:1.15; min-width:0; isolation:isolate }
+.device-canvas { position:absolute; inset:0 }
+.device-canvas canvas { width:100%; height:100%; max-width:100%; display:block }
+.capability-description { padding-inline:4px }
+.home-capability-copy h3 { font-family:'Space Grotesk',sans-serif; font-size:1.65rem; font-weight:700; margin-bottom:8px }
+.home-capability-copy p { max-width:32ch; font-size:1rem; line-height:1.6 }
+.home-render { mix-blend-mode:lighten }
+:root:not(.dark) .home-render { filter:invert(1) hue-rotate(180deg); mix-blend-mode:multiply }
+.home-journey { display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.25fr); align-items:center; gap:44px; padding-block:16px 28px }
+.home-journey h2 { max-width:none }
+.home-journey p { max-width:48ch; margin-top:16px; line-height:1.6; font-size:1.05rem }
+.home-journey .button { margin-top:20px; min-height:48px }
+.home-journey-path { display:block; position:relative; width:100%; aspect-ratio:1.85; pointer-events:none }
+.home-journey-path canvas { display:block; width:100%; height:100%; object-fit:contain }
+@media(min-width:761px) and (max-width:1023px) {
+  .immersive-home .page-container { width:calc(100% - 64px) }
+  .home-capability-copy { gap:24px }
+  .home-journey { gap:24px }
+}
+@media(max-width:760px) {
+  .immersive-home .page-container { width:calc(100% - 40px) }
+  .immersive-home .home-hero { min-height:0; padding-block:26px 4px; gap:0 }
+
+.immersive-home .hero-intro { font-size:.94rem; line-height:1.5; margin-block:12px 18px }
+  .immersive-home .hero-copy>.button { min-width:0; min-height:48px }
+  .immersive-home .terminal-link { margin-top:10px }
+  .immersive-home .hero-art { margin-top:0 }
+  .immersive-home .hero-art .galaxy-visual { height:clamp(390px,108vw,510px); min-height:0 }
+  .home-capabilities { padding-block:0 22px }
+  .home-section-intro { font-size:.94rem; line-height:1.5; max-width:34ch }
+  .home-capability-stage { margin-top:12px }
+  .home-capability-copy { display:grid; grid-template-columns:minmax(0,1fr); gap:16px }
+  .home-capability-copy article { display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr); gap:16px; align-items:center; min-height:190px; padding:0 }
+  .capability-visual { position:relative; inset:auto; width:100%; height:auto; min-height:190px; margin:0; aspect-ratio:.85; pointer-events:auto }
+  .capability-description { padding:0 }
+  .home-capability-copy h3 { font-size:1.3rem; margin-bottom:8px }
+  .home-capability-copy p { font-size:.94rem; line-height:1.55 }
+  .home-journey { display:flex; flex-direction:column; align-items:stretch; gap:0; padding-block:24px 12px }
+
+  .home-journey p { font-size:.94rem; line-height:1.55; margin-top:12px }
+  .home-journey-path { margin-top:20px }
+}
+
+
+
+@media(min-width:761px) and (max-width:1000px) {
+  .home-capability-copy { grid-template-columns:minmax(0,1fr); gap:24px }
+  .home-capability-copy article { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); align-items:center; gap:32px }
+  .capability-visual { aspect-ratio:1.35; min-height:230px }
+  .home-capability-copy p { max-width:35ch }
+}
+@media(max-width:359px) {
+  .home-capability-copy { gap:28px }
+  .home-capability-copy article { grid-template-columns:minmax(0,1fr); gap:4px }
+  .capability-visual { aspect-ratio:1.2; min-height:220px }
+  .capability-description { padding:0 8px 12px }
+}
+
+.device-loading { position:absolute; inset:0; display:grid; place-items:center; color:var(--muted); font-size:.85rem; text-align:center; padding:12px }
+.device-canvas canvas { cursor:grab; border-radius:12px }
+.device-canvas canvas:active { cursor:grabbing }
+.device-canvas canvas:focus-visible { outline:3px solid var(--accent); outline-offset:-3px }
+.device-interaction-help { color:var(--muted); font-size:.78rem; line-height:1.7; margin-top:10px; max-width:75ch }
+
+
+/* Give each device enough actual screen pixels, instead of shrinking it into
+   a narrow column beside the mobile copy. Controls have their own top row. */
+.capability-visual { aspect-ratio:1; padding-top:0 }
+.device-canvas { top:0 }
+.home-capability-copy article { align-content:start }
+@media(min-width:761px) and (max-width:1023px) {
+  .home-capability-copy { grid-template-columns:minmax(0,1fr); gap:32px }
+  .home-capability-copy article { display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); align-items:center; gap:32px }
+  .capability-visual { aspect-ratio:1.3; min-height:310px }
+}
+@media(max-width:760px) {
+  .home-capability-copy { gap:34px }
+  .home-capability-copy article { display:block; min-height:0 }
+  .capability-visual { aspect-ratio:1.06; min-height:300px; max-width:480px; margin-inline:auto }
+  .device-mobile { aspect-ratio:.87 }
+  .capability-description { padding:4px 4px 0 }
+  .home-capability-copy h3 { font-size:1.5rem }
+  .home-capability-copy p { font-size:1rem; max-width:36ch }
+}
+@media(max-width:359px) {
+  .capability-visual { min-height:275px }
+}
+
+.device-open { display:none; position:absolute; inset:0; width:100%; height:100%; min-height:44px; min-width:44px; border:0; background:transparent; cursor:zoom-in; touch-action:pan-y; border-radius:12px }
+.device-open:focus-visible { outline:3px solid var(--accent); outline-offset:-3px }
+.device-help-touch { display:none }
+.device-dialog { position:fixed; inset:0; width:100vw; max-width:none; height:100dvh; max-height:none; margin:0; padding:0; border:0; background:var(--bg); color:var(--text); overflow:hidden }
+.device-dialog::backdrop { background:rgba(0,0,0,.85) }
+.device-dialog-layout { height:100%; display:flex; flex-direction:column; padding:max(16px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left)) }
+.device-dialog-header { display:flex; align-items:center; justify-content:space-between; gap:20px; flex-shrink:0 }
+.device-dialog-header h2 { font-family:'Space Grotesk',sans-serif; font-size:1.25rem; line-height:1.3; letter-spacing:0 }
+.device-dialog-close { min-width:44px; min-height:44px; display:flex; align-items:center; justify-content:center; background:var(--surface); border:1px solid var(--line); border-radius:50%; color:var(--text); cursor:pointer }
+.device-dialog-host { position:relative; flex:1; min-height:0; width:100% }
+.device-dialog-host canvas { display:block; width:100%; height:100%; cursor:grab }
+.device-dialog-host canvas:active { cursor:grabbing }
+.device-dialog-host canvas:focus-visible { outline:3px solid var(--accent); outline-offset:-3px }
+.device-dialog-help { text-align:center; color:var(--muted); font-size:.85rem; line-height:1.6; padding-top:12px; flex-shrink:0 }
+@media(max-width:1023px),(pointer:coarse) {
+  .device-open { display:block }
+  .device-help-desktop { display:none }
+  .device-help-touch { display:inline }
+}
+
+/* Keep the desktop composition on laptops and tablets, with proportionate type. */
+@media(min-width:640px) and (max-width:1023px) {
+  .immersive-home .home-hero { display:grid; width:calc(100% - 48px); grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr); gap:12px; align-items:center; padding-block:28px }
+  .immersive-home .hero-copy { min-width:0 }
+
+.immersive-home .hero-intro { font-size:.95rem; line-height:1.6; margin-block:12px 18px }
+  .immersive-home .hero-copy>.button { min-width:0; max-width:100%; font-size:.9rem; padding-inline:18px }
+  .immersive-home .hero-art { width:100%; margin:0; min-width:0 }
+  .immersive-home .hero-art .galaxy-visual { height:clamp(360px,48vw,470px); min-height:0 }
+}
+@media(max-width:639px) {
+  .immersive-home .home-hero { display:grid; grid-template-columns:minmax(0,1fr); gap:10px }
+  .immersive-home .hero-copy { grid-row:1 }
+  .immersive-home .hero-art { grid-row:2; width:calc(100% + 40px); margin-inline:-20px }
+}
+
+/* Laptops retain the desktop grid; compact/tablet stacking ends at 1023px. */
+@media(min-width:1024px) and (max-width:1099px) {
+  .desktop-navigation,.desktop-preferences { display:flex }
+  .menu-trigger { display:none }
+}
+
+
+
+/* Wide desktop: expand the composition without stretching text measures. */
+@media(min-width:1920px) {
+  .immersive-home .page-container { width:min(2400px,calc(100% - clamp(96px,5vw,192px))) }
+  .immersive-home .home-hero { padding-block:48px 52px; gap:48px }
+  .immersive-home .hero-copy h1 { font-size:clamp(3.8rem,3.2vw,5rem) }
+.immersive-home .hero-intro { font-size:1.15rem }
+  .immersive-home .hero-art .galaxy-visual { height:clamp(560px,27vw,760px) }
+  .immersive-home h2 { font-size:3rem }
+  .home-section-intro { font-size:1.2rem }
+  .home-capability-copy { gap:48px }
+  .capability-visual { aspect-ratio:1.15 }
+  .home-capability-copy h3 { font-size:1.9rem }
+  .home-capability-copy p { font-size:1.125rem; max-width:40ch }
+  .home-capabilities { padding-bottom:64px }
+  .home-journey { gap:64px; padding-block:32px 48px }
+  .home-journey p { font-size:1.15rem }
+  .site-header-inner { width:min(2400px,calc(100% - clamp(96px,5vw,192px))); max-width:none; padding-inline:0 }
+  .portfolio-footer-inner { width:min(2400px,calc(100% - clamp(96px,5vw,192px))) }
+}
+
+.immersive-home .home-outline-button,
+.immersive-home .home-outline-button:hover,
+.immersive-home .home-outline-button:active { background:var(--bg); border-color:var(--accent); color:var(--accent); box-shadow:none; transform:none; transition:none }
+.immersive-home .terminal-link { border:0; background:var(--bg); padding:0; text-align:left; cursor:pointer }
+
+.immersive-home .hero-copy h1 span,.home-journey h2 span { display:inline; white-space:normal }
+.immersive-home .hero-copy h1,.immersive-home h2 { text-wrap:wrap }
+.home-journey-path canvas { position:absolute; inset:0 }
+@media(max-width:1023px) {
+  .immersive-home .hero-copy h1 { font-size:clamp(2rem,4.5vw,3rem); line-height:1.08 }
+}
+@media(max-width:639px) {
+  .immersive-home .hero-copy h1 { font-size:clamp(2rem,9vw,3rem) }
+}
+
+.journey-stage-label { position:absolute; z-index:1; left:var(--stage-x,50%); top:var(--stage-y,50%); transform:translate(-50%,calc(-100% - 36px)); color:var(--accent); font-size:1.05rem; font-weight:600; white-space:nowrap; opacity:0 }
+@media(max-width:1023px) {
+  .home-journey-path { margin-bottom:20px; aspect-ratio:1.6 }
+  .journey-stage-label { transform:translate(-50%,calc(-100% - 44px)); font-size:1rem }
+}
+
+@media(max-width:760px) {
+  .home-journey-path { width:calc(100% + 40px); margin-inline:-20px; aspect-ratio:1.55; margin-top:24px }
+}
+
+.journey-visual { min-width:0 }
+.journey-node-button { display:block; position:absolute; z-index:2; width:44px; height:44px; min-width:44px; min-height:44px; transform:translate(-50%,-50%); border:0; border-radius:50%; padding:0; background:transparent; pointer-events:auto; cursor:pointer }
+.journey-node-button:focus-visible { outline:2px solid var(--accent); outline-offset:3px }
+.journey-interaction { display:block }
+.home-journey .journey-instruction { margin:8px 0 0; font-size:.85rem; color:var(--muted) }
+
+.journey-node-button:disabled { visibility:hidden }
+
+/* A single static star field spans copy, transparent controls and artwork. */
+.home-constellation { position:relative; isolation:isolate }
+.home-constellation::before { content:""; position:absolute; inset:0; z-index:-1; pointer-events:none; background-image:url('/assets/home/section-constellation.svg'); background-size:1200px 720px; opacity:.8 }
+:root:not(.dark) .home-constellation::before { background-image:none; background-color:var(--accent-art); mask-image:url('/assets/home/section-constellation.svg'); mask-size:1200px 720px; opacity:.9 }

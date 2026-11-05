@@ -1,0 +1,32 @@
+.site-dialog { inset:0; margin:auto; width:min(880px,calc(100% - 48px)); max-width:none; max-height:calc(100dvh - 48px); padding:24px; border:1px solid var(--control); border-radius:12px; background:var(--bg); color:var(--text); overflow:hidden }
+.site-dialog[open] { display:flex; flex-direction:column; gap:24px }
+.site-dialog::backdrop { background:rgba(0,0,0,.82) }
+.site-dialog-header { display:flex; justify-content:space-between; align-items:flex-start; gap:24px; flex-shrink:0 }
+.site-dialog-header>div { min-width:0 }
+.site-dialog-header h2 { overflow-wrap:anywhere; font-family:'Space Grotesk',sans-serif; font-size:clamp(1.8rem,3vw,2.5rem); line-height:1.15 }
+.site-dialog-header p { margin-top:8px; max-width:62ch; font-size:.95rem; line-height:1.6 }
+.site-dialog-header .modal-close-button { flex:none }
+.site-dialog-body { min-width:0; overflow-wrap:anywhere; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none; min-height:0; padding:4px }
+.site-dialog-body::-webkit-scrollbar { display:none }
+.contact-modal-form :is(input,textarea),
+.contact-modal-form :is(input,textarea):hover,
+.contact-modal-form :is(input,textarea):focus { border-color:var(--control); background:var(--bg); box-shadow:none; transition:none }
+.contact-modal-form :is(input,textarea):focus-visible { outline:2px solid var(--accent); outline-offset:-2px }
+.contact-modal-form :is(input,textarea)[aria-invalid=true] { border-color:var(--error) }
+.contact-modal-form .form-submit,.contact-modal-form .form-submit:hover { background:transparent; border-color:var(--accent); color:var(--accent); transform:none; box-shadow:none }
+.contact-modal-form .contact-privacy-note { font-size:.85rem; margin-top:18px; line-height:1.65 }
+.contact-modal-form .contact-privacy-note a { display:inline-flex; align-items:center; min-height:44px; color:var(--accent) }
+.contact-modal-form .contact-success { padding-block:8px }
+.contact-modal-form .contact-success h3 { font-size:1.7rem }
+.contact-modal-form .contact-success p { max-width:60ch; line-height:1.65 }
+.contact-modal-form .contact-alternatives { border-top:1px solid var(--line); padding-top:20px; width:100%; display:flex; flex-wrap:wrap; gap:12px 24px }
+.contact-modal-form .contact-alternatives h4 { flex-basis:100% }
+.contact-modal-form .contact-alternatives a { min-height:44px; display:flex; align-items:center; gap:10px; color:var(--accent); overflow-wrap:anywhere }
+.contact-modal-form .contact-alternatives small { display:block; color:var(--muted) }
+@media(min-width:640px) { .contact-fields { display:grid; grid-template-columns:1fr 1fr; gap:20px } .contact-fields .form-field+.form-field { margin-top:0 } .contact-fields .form-field:nth-child(n+3) { grid-column:1/-1 } }
+@media(max-width:760px) { .site-dialog { width:calc(100% - 24px); max-height:calc(100dvh - 24px); padding:16px; border-radius:9px } .site-dialog[open] { gap:16px } .site-dialog-header { gap:12px } .site-dialog-header p { font-size:.86rem } }
+@media(max-height:600px) { .site-dialog { max-height:calc(100dvh - 16px); padding:12px } .site-dialog[open] { gap:12px } .site-dialog-header>div { min-width:0 }
+.site-dialog-header h2 { overflow-wrap:anywhere; font-size:1.5rem } }
+
+.contact-privacy-check a,.contact-captcha-legal a { display:inline-flex; align-items:center; min-height:44px; min-width:44px }
+.contact-modal-form .contact-captcha>p a { line-height:1.5 }

@@ -1,0 +1,25 @@
+{
+  "name": "Giuseppe Cairone — Portfolio",
+  "short_name": "GC Portfolio",
+  "description": "Portfolio personale con progetti e certificazioni",
+  "start_url": "./",
+  "display": "standalone",
+  "scope": "./",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/brand/gc/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/brand/gc/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

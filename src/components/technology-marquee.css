@@ -1,0 +1,29 @@
+.technology-marquee { border-block:1px solid var(--line); background:var(--bg); margin-block:12px 0 }
+.technology-row { overflow:hidden; padding-block:12px }
+.technology-row + .technology-row { border-top:1px solid var(--line) }
+.technology-track { display:flex; width:max-content; translate:var(--keyboard-offset,0px) 0; animation:technology-scroll var(--technology-duration,38s) linear infinite; animation-play-state:paused }
+.technology-track-reverse { animation-direction:reverse }
+.technology-group { display:flex; flex:none; gap:48px; align-items:center; padding-right:48px }
+.technology-item { display:inline-flex; flex:none; align-items:center; justify-content:center; gap:14px; min-height:56px; min-width:44px; padding:8px 4px; border:0; border-radius:0; background:transparent; color:var(--text); cursor:pointer; font-family:'Space Grotesk',sans-serif; font-size:1.35rem; font-weight:500; line-height:1.3; white-space:nowrap }
+.technology-item img { display:block; flex:none; width:36px; height:36px; object-fit:contain }
+.technology-express img { padding:3px; background:#fff; border-radius:3px }
+.technology-item:focus-visible { outline:2px solid var(--accent); outline-offset:2px }
+.technology-marquee[data-running="true"][data-paused="false"] .technology-track { animation-play-state:running }
+.technology-row:hover .technology-track,.technology-row[data-keyboard-active="true"] .technology-track { animation-play-state:paused !important }
+.technology-marquee .journey-stage-modal p { margin-top:20px; font-size:1rem; line-height:1.65 }
+.technology-marquee .journey-stage-modal-title { display:flex; align-items:center; gap:14px }
+.technology-modal-icon { width:36px; height:36px; flex:none; object-fit:contain }
+.technology-modal-icon[src$="/express.svg"] { background:#fff; border-radius:3px; padding:3px }
+@keyframes technology-scroll { to { transform:translateX(calc(-1 * var(--technology-cycle,2000px))) } }
+@media(max-width:760px) {
+  .technology-row { padding-block:10px }
+  .technology-group { gap:30px; padding-right:30px }
+  .technology-item { gap:12px; font-size:1.15rem; min-height:52px }
+  .technology-item img { width:32px; height:32px }
+}
+@media(prefers-reduced-motion:reduce) {
+  .technology-track { animation:none }
+  .technology-row { overflow-x:auto; scrollbar-width:thin }
+  .technology-group { padding-inline:20px }
+  .technology-group[aria-hidden="true"] { display:none }
+}

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="it" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giuseppe Cairone | Sviluppatore full-stack junior</title>
+    <meta name="description" content="Portfolio di Giuseppe Cairone: sviluppo web & mobile, Three.js 3D WebGL, React, TypeScript e architetture scalabili." />
+    <meta name="theme-color" content="#050505" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <link rel="icon" type="image/x-icon" href="/assets/brand/gc/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/brand/gc/icon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/brand/gc/icon-16.png" />
+    <link rel="icon" type="image/svg+xml" href="/assets/brand/gc/favicon.svg" />
+    <link rel="apple-touch-icon" href="/assets/brand/gc/icon-180.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <link rel="preload" href="/assets/fonts/space-grotesk.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/assets/fonts/inter.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="canonical" href="https://orioncoding28.github.io/Portfolio-React/" />
+    <script>
+      try {
+        document.documentElement.classList.toggle('dark', localStorage.getItem('portfolio_theme') !== 'light');
+      } catch (_) {}
+      const route = new URLSearchParams(location.search).get('__route');
+      if (route && route.startsWith('/') && !route.startsWith('//')) {
+        try {
+          const target = new URL(route, location.origin);
+          if (target.origin === location.origin && target.pathname.startsWith('%BASE_URL%')) history.replaceState(null, '', target.pathname + target.search + target.hash);
+        } catch (_) {}
+      }
+    </script>
+
+    <!-- Open Graph & Twitter Cards -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://orioncoding28.github.io/Portfolio-React/" />
+    <meta property="og:title" content="Giuseppe Cairone | Sviluppatore full-stack junior" />
+    <meta property="og:description" content="Portfolio di Giuseppe Cairone: sviluppo web & mobile, Three.js 3D WebGL, React e architetture scalabili." />
+    <meta property="og:image" content="https://orioncoding28.github.io/Portfolio-React/assets/images/profile.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Giuseppe Cairone",
+      "url": "https://orioncoding28.github.io/Portfolio-React/",
+      "jobTitle": "Sviluppatore full-stack junior",
+      "description": "Portfolio personale con progetti full-stack, architetture modulari, Three.js 3D WebGL e certificazioni professionali",
+      "sameAs": [
+        "https://github.com/ORIONCODING28",
+        "https://www.linkedin.com/in/giuseppe-cairone-a50943390/"
+      ]
+    }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
