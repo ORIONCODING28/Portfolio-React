@@ -411,6 +411,17 @@ export const certificationsIT: Certification[] = [
     badge: publicAsset('/assets/certification/Attestato_Claude_101.png'),
     credential_url: 'https://academy.claude.com/verify/9d312e76cf2914e9a87d598aa7a47cf8',
     order: 4
+  },
+  {
+    id: 5,
+    title: 'Claude Platform 101',
+    issuing_organization: 'Claude Academy',
+    issue_date: '6 novembre 2026',
+    description: 'Attestato di completamento del corso Claude Platform 101.',
+    image: publicAsset('/assets/certification/Attestato_Claude_Platform_101.png'),
+    badge: publicAsset('/assets/certification/Attestato_Claude_Platform_101.png'),
+    credential_url: 'https://academy.claude.com/verify/5a71be33b8d8c35c80a7e5d42dcdc486',
+    order: 5
   }
 ];
 
@@ -458,6 +469,17 @@ export const certificationsEN: Certification[] = [
     badge: publicAsset('/assets/certification/Attestato_Claude_101.png'),
     credential_url: 'https://academy.claude.com/verify/9d312e76cf2914e9a87d598aa7a47cf8',
     order: 4
+  },
+  {
+    id: 5,
+    title: 'Claude Platform 101',
+    issuing_organization: 'Claude Academy',
+    issue_date: '6 November 2026',
+    description: 'Certificate of completion for the Claude Platform 101 course.',
+    image: publicAsset('/assets/certification/Attestato_Claude_Platform_101.png'),
+    badge: publicAsset('/assets/certification/Attestato_Claude_Platform_101.png'),
+    credential_url: 'https://academy.claude.com/verify/5a71be33b8d8c35c80a7e5d42dcdc486',
+    order: 5
   }
 ];
 
