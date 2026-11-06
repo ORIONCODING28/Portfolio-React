@@ -13,6 +13,9 @@ export function GalaxyVisual({controller,presentation,prompt}: {controller:RefOb
       if(cancelled)return;
       controller.current=createGalaxy(element,dark.current,false,prompt);
       if(presentation.current)controller.current.setPresentation(presentation.current);
+      void document.fonts?.load('800 104px "Orbitron"').then(()=>{
+        if(!cancelled)controller.current?.refreshPrompt();
+      }).catch(()=>{});
       void document.fonts?.load('700 64px "Inter"').then(()=>{
         if(!cancelled)controller.current?.setTheme(dark.current);
       }).catch(()=>{});

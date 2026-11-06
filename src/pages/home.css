@@ -196,16 +196,19 @@
 :root:not(.dark) .home-constellation::before { background-image:none; background-color:var(--accent-art); mask-image:url('/assets/home/section-constellation.svg'); mask-size:1200px 720px; opacity:.9 }
 
 
-.home-intro { overflow-x:clip }
+.home-intro { overflow-x:clip; z-index:1 }
 
 /* Local scroll study: the resting grid remains the approved home composition. */
-.home-intro[data-intro-ready] .home-hero { position:sticky; top:var(--intro-top); min-height:var(--intro-viewport); align-content:start; z-index:2 }
+.home-intro[data-intro-ready] .home-hero { position:sticky; top:var(--intro-top); min-height:0; align-content:start; z-index:2 }
 .home-intro .hero-art { position:relative; z-index:2; pointer-events:none }
 .home-intro .hero-copy { z-index:3 }
 /* Full-section canvas; the art slot controls only the final composition. */
 .home-intro::before,:root:not(.dark) .home-intro::before { display:none }
-.home-intro .home-hero>.galaxy-visual { position:absolute; top:0; left:0; width:100%; height:max(100%,var(--intro-viewport,640px)); min-height:0; z-index:2; pointer-events:none }
+.home-intro .home-hero>.galaxy-visual { position:absolute; top:0; left:0; width:100%; height:max(100%,var(--intro-viewport,640px)); min-height:0; background:var(--bg); z-index:2; pointer-events:none }
 .home-intro .hero-art { height:clamp(390px,38vw,510px) }
 @media(min-width:640px) and (max-width:1023px) { .home-intro .hero-art { height:clamp(360px,48vw,470px) } }
-@media(max-width:639px) { .home-intro .hero-art { height:clamp(390px,108vw,510px) } }
+@media(max-width:639px) {
+  .home-intro .hero-art { grid-row:1; height:clamp(300px,88vw,370px) }
+  .immersive-home .home-intro .hero-copy { grid-row:2 }
+}
 @media(min-width:1920px) { .home-intro .hero-art { height:clamp(560px,27vw,760px) } }

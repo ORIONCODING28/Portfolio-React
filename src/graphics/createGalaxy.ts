@@ -5,6 +5,7 @@ import { fitGalaxyCamera, getGalaxyPointScale } from './fitGalaxyCamera';
 
 export interface GalaxyPresentation { left:number; top:number; width:number; height:number; formation:number }
 export interface GalaxyController {
+  refreshPrompt: () => void;
   setPresentation: (presentation: GalaxyPresentation) => void;
   setPaused: (paused: boolean) => void;
   setTheme: (dark: boolean) => void;
@@ -85,8 +86,8 @@ class AngularGalaxy implements GalaxyController {
     // Expand the camera beyond the resting art slot instead of cropping particles to a card.
     this.camera.setViewOffset(box.width,box.height,-box.left,-box.top,width,height);
     this.particleProjection.value=getGalaxyPointScale(this.camera,box.height,this.renderer.getPixelRatio());
-    const textWidth=Math.min(300,width*.7);
-    this.scrollPrompt.material.uniforms.promptScale.value.set(textWidth/width,textWidth/4/height);
+    const textWidth=Math.min(580,width*.9);
+    this.scrollPrompt.material.uniforms.promptScale.value.set(textWidth/width,textWidth*160/768/height);
     this.scrollPrompt.material.uniforms.promptCentre.value.set((box.left+box.width/2)/width*2-1,1-(box.top+box.height/2)/height*2);
   }
 
@@ -119,6 +120,15 @@ class AngularGalaxy implements GalaxyController {
     if(this.visible&&!document.hidden&&!this.renderer.getContext().isContextLost())this.renderer.render(this.scene,this.camera);
   }
 
+  refreshPrompt(): void {
+    this.mainGroup.remove(this.scrollPrompt);
+    this.scrollPrompt.geometry.dispose();this.scrollPrompt.material.dispose();
+    this.scrollPrompt=createScrollPrompt(this.promptLabel,this.formation,this.clock,this.dark);
+    this.scrollPrompt.material.uniforms.pixelRatio.value=this.pixelRatio.value;
+    this.mainGroup.add(this.scrollPrompt);this.projectPresentation();
+    if(this.visible&&!document.hidden&&!this.renderer.getContext().isContextLost())this.renderer.render(this.scene,this.camera);
+  }
+
   setPaused(paused: boolean): void { this.paused = paused; this.sync(); }
 
   setTheme(dark: boolean): void {
@@ -129,7 +139,8 @@ class AngularGalaxy implements GalaxyController {
     this.currentTextColor = dark ? this.darkTextColor : this.lightTextColor;
     this.currentTechColor = dark ? this.darkTechColor : this.lightTechColor;
     this.constellationPoints?.color.set(this.currentTextColor);
-    this.scrollPrompt.material.uniforms.tint.value.set(dark ? 0x00d9ff : 0x0755c9);
+    this.scrollPrompt.material.uniforms.tint.value.set(dark ? 0x00d9ff : 0x0755c9).multiplyScalar(dark?2.2:1);
+    this.scrollPrompt.material.blending=dark ? THREE.AdditiveBlending : THREE.NormalBlending;
     this.updateGalaxyColors();
     this.updateTextColors();
     this.renderer.render(this.scene, this.camera);
