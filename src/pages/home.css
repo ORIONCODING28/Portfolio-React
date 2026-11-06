@@ -1,15 +1,15 @@
-.immersive-home .page-container { width:min(1680px,calc(100% - 64px)); max-width:none }
-.immersive-home .home-hero { min-height:0; padding-block:28px 32px; grid-template-columns:1fr 1.1fr; gap:18px }
+.immersive-home .page-container { width:var(--content-width); max-width:none }
+.immersive-home .home-hero { min-height:0; padding-block:var(--space-page-start); grid-template-columns:1fr 1.1fr; gap:18px }
 .immersive-home .hero-copy h1 { font-size:clamp(2.25rem,3.65vw,3.8rem); line-height:1.01; letter-spacing:-.035em }
-.immersive-home .hero-intro { font-size:1.05rem; line-height:1.5; max-width:44ch; margin-block:14px 22px }
+.immersive-home .hero-intro { font-size:1.05rem; line-height:1.5; max-width:44ch; margin-block:var(--space-text) var(--space-control)}
 .immersive-home .hero-copy>.button { min-width:260px; min-height:50px }
 .immersive-home .terminal-link { margin-top:14px }
 .immersive-home .hero-art .galaxy-visual { height:clamp(390px,38vw,510px); min-height:0 }
-.home-capabilities { padding-top:12px; padding-bottom:40px }
+.home-capabilities { padding-block:var(--space-group) var(--space-section) }
 .immersive-home h2 { font-family:'Space Grotesk',sans-serif; font-size:clamp(1.8rem,3.1vw,2.6rem); line-height:1.15; letter-spacing:-.025em; font-weight:700 }
 .home-section-intro { margin-top:10px; font-size:1.1rem }
-.home-capability-stage { margin-top:12px }
-.home-capability-copy { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:30px }
+.home-capability-stage { margin-top:var(--space-control)}
+.home-capability-copy { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--space-grid)}
 .home-capability-copy article { min-width:0 }
 .capability-visual { position:relative; width:100%; aspect-ratio:1.15; min-width:0; isolation:isolate }
 .device-canvas { position:absolute; inset:0 }
@@ -19,51 +19,51 @@
 .home-capability-copy p { max-width:32ch; font-size:1rem; line-height:1.6 }
 .home-render { mix-blend-mode:lighten }
 :root:not(.dark) .home-render { filter:invert(1) hue-rotate(180deg); mix-blend-mode:multiply }
-.home-journey { display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.25fr); align-items:center; gap:44px; padding-block:16px 28px }
+.home-journey { display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.25fr); align-items:center; gap:44px; padding-block:var(--space-section)}
 .home-journey h2 { max-width:none }
-.home-journey p { max-width:48ch; margin-top:16px; line-height:1.6; font-size:1.05rem }
-.home-journey .button { margin-top:20px; min-height:48px }
+.home-journey p { max-width:48ch; margin-top:var(--space-text); line-height:1.6; font-size:1.05rem }
+.home-journey .button { margin-top:var(--space-control); min-height:48px }
 .home-journey-path { display:block; position:relative; width:100%; aspect-ratio:1.85; pointer-events:none }
 .home-journey-path canvas { display:block; width:100%; height:100%; object-fit:contain }
 @media(min-width:761px) and (max-width:1023px) {
-  .immersive-home .page-container { width:calc(100% - 64px) }
-  .home-capability-copy { gap:24px }
+  .immersive-home .page-container { width:var(--content-width)}
+  .home-capability-copy { gap:var(--space-grid)}
   .home-journey { gap:24px }
 }
 @media(max-width:760px) {
-  .immersive-home .page-container { width:calc(100% - 40px) }
-  .immersive-home .home-hero { min-height:0; padding-block:26px 4px; gap:0 }
+  .immersive-home .page-container { width:var(--content-width)}
+  .immersive-home .home-hero { min-height:0; padding-block:var(--space-page-start); gap:0 }
 
-.immersive-home .hero-intro { font-size:.94rem; line-height:1.5; margin-block:12px 18px }
+.immersive-home .hero-intro { font-size:.94rem; line-height:1.5; margin-block:var(--space-text) var(--space-control)}
   .immersive-home .hero-copy>.button { min-width:0; min-height:48px }
   .immersive-home .terminal-link { margin-top:10px }
   .immersive-home .hero-art { margin-top:0 }
   .immersive-home .hero-art .galaxy-visual { height:clamp(390px,108vw,510px); min-height:0 }
-  .home-capabilities { padding-block:0 22px }
+  .home-capabilities { padding-block:var(--space-group) var(--space-section)}
   .home-section-intro { font-size:.94rem; line-height:1.5; max-width:34ch }
-  .home-capability-stage { margin-top:12px }
-  .home-capability-copy { display:grid; grid-template-columns:minmax(0,1fr); gap:16px }
+  .home-capability-stage { margin-top:var(--space-control)}
+  .home-capability-copy { display:grid; grid-template-columns:minmax(0,1fr); gap:var(--space-grid)}
   .home-capability-copy article { display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr); gap:16px; align-items:center; min-height:190px; padding:0 }
   .capability-visual { position:relative; inset:auto; width:100%; height:auto; min-height:190px; margin:0; aspect-ratio:.85; pointer-events:auto }
   .capability-description { padding:0 }
   .home-capability-copy h3 { font-size:1.3rem; margin-bottom:8px }
   .home-capability-copy p { font-size:.94rem; line-height:1.55 }
-  .home-journey { display:flex; flex-direction:column; align-items:stretch; gap:0; padding-block:24px 12px }
+  .home-journey { display:flex; flex-direction:column; align-items:stretch; gap:0; padding-block:var(--space-section)}
 
-  .home-journey p { font-size:.94rem; line-height:1.55; margin-top:12px }
+  .home-journey p { font-size:.94rem; line-height:1.55; margin-top:var(--space-text)}
   .home-journey-path { margin-top:20px }
 }
 
 
 
 @media(min-width:761px) and (max-width:1000px) {
-  .home-capability-copy { grid-template-columns:minmax(0,1fr); gap:24px }
+  .home-capability-copy { grid-template-columns:minmax(0,1fr); gap:var(--space-grid)}
   .home-capability-copy article { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); align-items:center; gap:32px }
   .capability-visual { aspect-ratio:1.35; min-height:230px }
   .home-capability-copy p { max-width:35ch }
 }
 @media(max-width:359px) {
-  .home-capability-copy { gap:28px }
+  .home-capability-copy { gap:var(--space-grid)}
   .home-capability-copy article { grid-template-columns:minmax(0,1fr); gap:4px }
   .capability-visual { aspect-ratio:1.2; min-height:220px }
   .capability-description { padding:0 8px 12px }
@@ -73,7 +73,7 @@
 .device-canvas canvas { cursor:grab; border-radius:12px }
 .device-canvas canvas:active { cursor:grabbing }
 .device-canvas canvas:focus-visible { outline:3px solid var(--accent); outline-offset:-3px }
-.device-interaction-help { color:var(--muted); font-size:.78rem; line-height:1.7; margin-top:10px; max-width:75ch }
+.device-interaction-help { color:var(--muted); font-size:.78rem; line-height:1.7; margin-top:12px; max-width:75ch }
 
 
 /* Give each device enough actual screen pixels, instead of shrinking it into
@@ -82,12 +82,12 @@
 .device-canvas { top:0 }
 .home-capability-copy article { align-content:start }
 @media(min-width:761px) and (max-width:1023px) {
-  .home-capability-copy { grid-template-columns:minmax(0,1fr); gap:32px }
+  .home-capability-copy { grid-template-columns:minmax(0,1fr); gap:var(--space-grid)}
   .home-capability-copy article { display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); align-items:center; gap:32px }
   .capability-visual { aspect-ratio:1.3; min-height:310px }
 }
 @media(max-width:760px) {
-  .home-capability-copy { gap:34px }
+  .home-capability-copy { gap:var(--space-grid)}
   .home-capability-copy article { display:block; min-height:0 }
   .capability-visual { aspect-ratio:1.06; min-height:300px; max-width:480px; margin-inline:auto }
   .device-mobile { aspect-ratio:.87 }
@@ -115,10 +115,10 @@
 
 /* Keep the desktop composition on laptops and tablets, with proportionate type. */
 @media(min-width:640px) and (max-width:1023px) {
-  .immersive-home .home-hero { display:grid; width:calc(100% - 48px); grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr); gap:12px; align-items:center; padding-block:28px }
+  .immersive-home .home-hero { display:grid; width:var(--content-width); grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr); gap:12px; align-items:center; padding-block:var(--space-page-start)}
   .immersive-home .hero-copy { min-width:0 }
 
-.immersive-home .hero-intro { font-size:.95rem; line-height:1.6; margin-block:12px 18px }
+.immersive-home .hero-intro { font-size:.95rem; line-height:1.6; margin-block:var(--space-text) var(--space-control)}
   .immersive-home .hero-copy>.button { min-width:0; max-width:100%; font-size:.9rem; padding-inline:18px }
   .immersive-home .hero-art { width:100%; margin:0; min-width:0 }
   .immersive-home .hero-art .galaxy-visual { height:clamp(360px,48vw,470px); min-height:0 }
@@ -126,7 +126,7 @@
 @media(max-width:639px) {
   .immersive-home .home-hero { display:grid; grid-template-columns:minmax(0,1fr); gap:10px }
   .immersive-home .hero-copy { grid-row:1 }
-  .immersive-home .hero-art { grid-row:2; width:calc(100% + 40px); margin-inline:-20px }
+  .immersive-home .hero-art { grid-row:2; width:calc(100% + var(--page-gutter) * 2); margin-inline:calc(-1 * var(--page-gutter)) }
 }
 
 /* Laptops retain the desktop grid; compact/tablet stacking ends at 1023px. */
@@ -139,22 +139,22 @@
 
 /* Wide desktop: expand the composition without stretching text measures. */
 @media(min-width:1920px) {
-  .immersive-home .page-container { width:min(2400px,calc(100% - clamp(96px,5vw,192px))) }
-  .immersive-home .home-hero { padding-block:48px 52px; gap:48px }
+  .immersive-home .page-container { width:var(--content-width)}
+  .immersive-home .home-hero { padding-block:var(--space-page-start); gap:48px }
   .immersive-home .hero-copy h1 { font-size:clamp(3.8rem,3.2vw,5rem) }
 .immersive-home .hero-intro { font-size:1.15rem }
   .immersive-home .hero-art .galaxy-visual { height:clamp(560px,27vw,760px) }
   .immersive-home h2 { font-size:3rem }
   .home-section-intro { font-size:1.2rem }
-  .home-capability-copy { gap:48px }
+  .home-capability-copy { gap:var(--space-grid)}
   .capability-visual { aspect-ratio:1.15 }
   .home-capability-copy h3 { font-size:1.9rem }
   .home-capability-copy p { font-size:1.125rem; max-width:40ch }
-  .home-capabilities { padding-bottom:64px }
-  .home-journey { gap:64px; padding-block:32px 48px }
+  .home-capabilities { padding-block:var(--space-group) var(--space-section) }
+  .home-journey { gap:64px; padding-block:var(--space-section)}
   .home-journey p { font-size:1.15rem }
-  .site-header-inner { width:min(2400px,calc(100% - clamp(96px,5vw,192px))); max-width:none; padding-inline:0 }
-  .portfolio-footer-inner { width:min(2400px,calc(100% - clamp(96px,5vw,192px))) }
+  .site-header-inner { width:var(--content-width); max-width:none; padding-inline:0}
+  .portfolio-footer-inner { width:var(--content-width)}
 }
 
 .immersive-home .home-outline-button,
@@ -179,7 +179,7 @@
 }
 
 @media(max-width:760px) {
-  .home-journey-path { width:calc(100% + 40px); margin-inline:-20px; aspect-ratio:1.55; margin-top:24px }
+  .home-journey-path { width:calc(100% + var(--page-gutter) * 2); margin-inline:calc(-1 * var(--page-gutter)); aspect-ratio:1.55; margin-top:24px }
 }
 
 .journey-visual { min-width:0 }

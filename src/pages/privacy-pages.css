@@ -1,9 +1,9 @@
 .policy-page { max-width:76ch; text-align:left }
-.policy-page .page-lead { max-width:60ch; line-height:1.6; margin-top:18px }
+.policy-page .page-lead { max-width:60ch; line-height:1.6; margin-top:var(--space-text)}
 .policy-updated { margin-top:14px; font-size:.875rem }
-.policy-section { margin-top:36px }
-.policy-section h2 { font-family:'Space Grotesk',sans-serif; font-size:1.4rem; line-height:1.3; margin-bottom:14px }
+.policy-section { margin-top:var(--space-page-start)}
+.policy-section h2 { font-family:'Space Grotesk',sans-serif; font-size:1.4rem; line-height:1.3; margin-bottom:var(--space-text)}
 .policy-section p { line-height:1.75; margin-top:12px; overflow-wrap:anywhere }
 .policy-section a { color:var(--accent); text-decoration:none; display:inline-block; min-height:44px; padding-block:8px }
 .policy-section a:hover { color:var(--text) }
-@media(max-width:760px) { .policy-section { margin-top:28px } }
+@media(max-width:760px) { .policy-section { margin-top:var(--space-page-start)} }

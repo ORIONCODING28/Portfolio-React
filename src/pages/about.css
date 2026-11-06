@@ -1,16 +1,16 @@
-.about-page .page-container { width:min(1680px,calc(100% - 64px)) }
+.about-page .page-container { width:var(--content-width)}
 .about-page h1,.about-page h2,.about-page h3 { font-family:'Space Grotesk',sans-serif; text-wrap:initial }
 .about-page p { line-height:1.65 }
-.about-intro-grid { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,.85fr); gap:80px; align-items:center; padding-block:55px }
+.about-intro-grid { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,.85fr); gap:80px; align-items:center; padding-block:var(--space-section)}
 .about-intro h1 { font-size:clamp(2.5rem,4.6vw,4.2rem); max-width:17ch; line-height:1.07 }
-.about-identity { margin-top:25px }
+.about-identity { margin-top:var(--space-text)}
 .about-identity p { color:var(--accent); font-weight:500; margin-top:7px }
-.about-bio { margin-top:18px; max-width:58ch }
+.about-bio { margin-top:var(--space-text); max-width:58ch }
 .about-portrait { width:100%; max-width:310px; justify-self:end; margin:0 }
 .about-portrait img { width:100%; height:365px; object-fit:cover; object-position:center top; border-radius:5px }
 .about-portrait figcaption { color:var(--muted); font-size:.8rem; margin-top:12px }
 .about-section { border-top:1px solid var(--line) }
-.about-journey,.about-skills { padding-block:48px }
+.about-journey,.about-skills { padding-block:var(--space-section)}
 .about-page h2 { font-size:clamp(1.8rem,2.8vw,2.7rem) }
 .about-journey-heading { display:flex; justify-content:space-between; align-items:flex-start; gap:25px }
 .about-journey-heading>div:first-child { min-width:0 }
@@ -18,17 +18,17 @@
 .about-arrows { display:flex; gap:10px; flex:none }
 .about-arrows button { width:48px; height:48px; display:grid; place-items:center; border:1px solid var(--accent); border-radius:8px; background:transparent; color:var(--accent) }
 .about-arrows button:disabled { cursor:default; opacity:.3 }
-.about-nearby { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; margin-top:30px; padding-bottom:18px; border-bottom:1px solid var(--line); border-image:linear-gradient(var(--line),var(--line)) 1 / 0 0 1px / 0 100vw }
+.about-nearby { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; margin-top:var(--space-group); padding-bottom:18px; border-bottom:1px solid var(--line); border-image:linear-gradient(var(--line),var(--line)) 1 / 0 0 1px / 0 100vw }
 .about-nearby button { background:transparent; border:0; text-align:left; color:var(--muted); min-height:60px; padding:8px 0; font-family:'Space Grotesk',sans-serif; line-height:1.35; font-size:1rem }
 .about-nearby button[aria-current=step] { color:var(--accent) }
 .about-nearby button span { display:block; font-family:Inter,sans-serif; font-size:.77rem; margin-bottom:7px }
-.about-stage { display:grid; grid-template-columns:minmax(260px,.85fr) minmax(0,1.4fr); align-items:center; gap:55px; padding-top:32px; min-height:500px; touch-action:pan-y pinch-zoom }
+.about-stage { display:grid; grid-template-columns:minmax(260px,.85fr) minmax(0,1.4fr); align-items:center; gap:55px; padding-top:var(--space-group); min-height:500px; touch-action:pan-y pinch-zoom }
 .about-stage-copy { min-width:0; touch-action:pan-y pinch-zoom }
-.about-stage-date { font-family:'Space Grotesk',sans-serif; font-size:clamp(1.8rem,2.6vw,2.4rem); color:var(--accent); line-height:1.1; margin-bottom:20px }
+.about-stage-date { font-family:'Space Grotesk',sans-serif; font-size:clamp(1.8rem,2.6vw,2.4rem); color:var(--accent); line-height:1.1; margin-bottom:var(--space-text)}
 .about-stage-copy h3 { font-size:clamp(1.8rem,2.7vw,2.5rem); line-height:1.15; max-width:27ch }
 .about-step-subtitle { margin-top:13px; color:var(--accent); font-size:1.08rem }
 .about-step-context { font-size:.83rem; margin-top:10px }
-.about-step-body { line-height:1.75; margin-top:20px; max-width:65ch }
+.about-step-body { line-height:1.75; margin-top:var(--space-text); max-width:65ch }
 .about-stage-copy ul { list-style:none; padding:0; margin:22px 0 0; display:grid; grid-template-columns:1fr 1fr; gap:12px 24px }
 .about-stage-copy li { font-size:.9rem; color:var(--muted); line-height:1.6; position:relative; padding-left:14px }
 .about-stage-copy li::before { content:""; position:absolute; top:9px; left:0; width:4px; height:4px; border-radius:50%; background:var(--accent) }
@@ -49,13 +49,13 @@
 .profile-object-dialog header h2 { min-width:0; overflow-wrap:anywhere; font-family:'Space Grotesk',sans-serif; font-size:1.5rem }
 .profile-object-dialog-host { flex:1; min-height:0; width:100% }
 .profile-object-dialog>p { text-align:center; font-size:.85rem; flex:none }
-.about-skills-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:32px; margin-top:30px }
+.about-skills-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:var(--space-grid); margin-top:var(--space-group)}
 .about-skills-grid h3 { font-size:1.4rem }
 .about-skills-grid p { font-size:.94rem; margin-top:12px }
 .about-skills-grid ul { list-style:none; padding:0; margin:14px 0 0; font-size:.86rem; line-height:1.9; color:var(--muted) }
 .about-skill-icons { display:flex; gap:15px; align-items:center; height:48px; margin-bottom:20px }
 .about-skill-icons img { width:33px; height:33px; object-fit:contain }
-.about-certifications { padding-block:48px }
+.about-certifications { padding-block:var(--space-section)}
 .about-outline,.about-outline:hover { background:var(--bg); color:var(--accent); border-color:var(--accent); transform:none; box-shadow:none }
 .profile-cert-gallery { min-width:0 }
 .profile-cert-viewport { overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; overscroll-behavior-x:contain }
@@ -70,25 +70,25 @@
 
 .profile-cert-controls>span { font-size:.83rem; color:var(--muted) }
 
-@media(max-width:1100px) { .about-intro-grid { gap:45px } .about-skills-grid { gap:25px } .about-stage { gap:35px } .about-certifications { gap:30px } }
-@media(max-width:1023px) { .about-intro-grid { grid-template-columns:1.4fr 1fr; gap:35px; padding-block:35px } .about-intro h1 { font-size:2.8rem } .about-portrait img { height:320px } .about-skills-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:26px 45px } .about-stage { grid-template-columns:minmax(220px,.8fr) minmax(0,1.2fr); gap:30px } .profile-object-host { height:320px } .about-stage-copy ul { grid-template-columns:1fr } .about-nearby { gap:18px } .about-nearby button { font-size:.95rem } }
-@media(max-width:639px) { .about-intro-grid { display:flex; flex-direction:column; gap:28px; align-items:stretch; padding-block:32px 38px } .about-intro h1 { font-size:clamp(2.5rem,10vw,3.2rem) } .about-identity { margin-top:20px } .about-bio { margin-top:14px; font-size:.98rem } .about-portrait { width:min(100%,340px); max-width:340px; align-self:center } .about-portrait img { height:auto; aspect-ratio:4/5; object-position:center top } .about-journey,.about-skills { padding-block:32px } .about-journey-heading { gap:12px } .about-journey-heading h2 { font-size:1.85rem } .about-journey-heading p { font-size:.88rem } .about-arrows { gap:7px } .about-arrows button { width:44px; height:44px } .about-nearby { gap:12px; margin-top:22px } .about-nearby button { font-size:.84rem; min-height:75px } .about-nearby button span { font-size:.7rem; line-height:1.4 } .about-stage { grid-template-columns:minmax(0,1fr); gap:14px; padding-top:10px; min-height:0 } .profile-object-host { height:275px } .about-stage-date { font-size:1.9rem; margin-bottom:14px } .about-stage-copy h3 { font-size:1.85rem } .about-step-body { font-size:.95rem } .about-stage-copy ul { margin-top:18px; gap:10px } .about-step-subtitle { font-size:1rem } .about-journey-bottom p { font-size:.73rem; max-width:22ch; text-align:right } .about-skills-grid { grid-template-columns:1fr; gap:24px; margin-top:25px } .about-skills-grid article { display:grid; grid-template-columns:1fr auto; column-gap:16px } .about-skills-grid article+article { border-top:1px solid var(--line); border-image:linear-gradient(var(--line),var(--line)) 1 / 1px 0 0 / 0 100vw; padding-top:20px } .about-skills-grid h3 { grid-column:1; grid-row:1; align-self:center } .about-skill-icons { grid-column:2; grid-row:1; margin:0; height:44px; gap:12px } .about-skill-icons img { width:25px; height:25px } .about-skills-grid p,.about-skills-grid ul { grid-column:1/-1 } .about-certifications { display:block; padding-block:32px } .profile-cert-track { grid-auto-columns:100%; gap:20px } .profile-cert-track li { align-items:center; text-align:center; padding-bottom:22px } .profile-cert-image { height:155px; justify-content:center } .profile-cert-track img { max-height:155px } }
+@media(max-width:1100px) { .about-intro-grid { gap:45px } .about-skills-grid { gap:var(--space-grid)} .about-stage { gap:35px } .about-certifications { gap:30px } }
+@media(max-width:1023px) { .about-intro-grid { grid-template-columns:1.4fr 1fr; gap:35px; padding-block:var(--space-section)} .about-intro h1 { font-size:2.8rem } .about-portrait img { height:320px } .about-skills-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--space-grid)} .about-stage { grid-template-columns:minmax(220px,.8fr) minmax(0,1.2fr); gap:30px } .profile-object-host { height:320px } .about-stage-copy ul { grid-template-columns:1fr } .about-nearby { gap:18px } .about-nearby button { font-size:.95rem } }
+@media(max-width:639px) { .about-intro-grid { display:flex; flex-direction:column; gap:28px; align-items:stretch; padding-block:var(--space-section)} .about-intro h1 { font-size:clamp(2.5rem,10vw,3.2rem) } .about-identity { margin-top:var(--space-text)} .about-bio { margin-top:var(--space-text); font-size:.98rem } .about-portrait { width:min(100%,340px); max-width:340px; align-self:center } .about-portrait img { height:auto; aspect-ratio:4/5; object-position:center top } .about-journey,.about-skills { padding-block:var(--space-section)} .about-journey-heading { gap:12px } .about-journey-heading h2 { font-size:1.85rem } .about-journey-heading p { font-size:.88rem } .about-arrows { gap:7px } .about-arrows button { width:44px; height:44px } .about-nearby { gap:12px; margin-top:var(--space-group)} .about-nearby button { font-size:.84rem; min-height:75px } .about-nearby button span { font-size:.7rem; line-height:1.4 } .about-stage { grid-template-columns:minmax(0,1fr); gap:14px; padding-top:var(--space-group); min-height:0 } .profile-object-host { height:275px } .about-stage-date { font-size:1.9rem; margin-bottom:var(--space-text)} .about-stage-copy h3 { font-size:1.85rem } .about-step-body { font-size:.95rem } .about-stage-copy ul { margin-top:18px; gap:10px } .about-step-subtitle { font-size:1rem } .about-journey-bottom p { font-size:.73rem; max-width:22ch; text-align:right } .about-skills-grid { grid-template-columns:1fr; gap:var(--space-grid); margin-top:var(--space-group)} .about-skills-grid article { display:grid; grid-template-columns:1fr auto; column-gap:16px } .about-skills-grid article+article { border-top:1px solid var(--line); border-image:linear-gradient(var(--line),var(--line)) 1 / 1px 0 0 / 0 100vw; padding-top:20px } .about-skills-grid h3 { grid-column:1; grid-row:1; align-self:center } .about-skill-icons { grid-column:2; grid-row:1; margin:0; height:44px; gap:12px } .about-skill-icons img { width:25px; height:25px } .about-skills-grid p,.about-skills-grid ul { grid-column:1/-1 } .about-certifications { display:block; padding-block:var(--space-section)} .profile-cert-track { grid-auto-columns:100%; gap:20px } .profile-cert-track li { align-items:center; text-align:center; padding-bottom:22px } .profile-cert-image { height:155px; justify-content:center } .profile-cert-track img { max-height:155px } }
 
 .about-journey { touch-action:pan-y pinch-zoom }
 
- .profile-cert-heading { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; column-gap:20px; row-gap:10px; padding-bottom:26px }
+ .profile-cert-heading { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; column-gap:20px; row-gap:10px; padding-bottom:var(--space-group)}
 .profile-cert-heading h2 { margin:0; font-size:clamp(1.85rem,3.2vw,2.3rem) }
 .profile-cert-heading p { grid-column:1/-1; margin:0; font-size:.94rem; max-width:none }
 .profile-cert-viewport { user-select:none; cursor:grab }
 @media(max-width:639px) {
-  .profile-cert-heading { grid-template-columns:minmax(0,1fr) auto; gap:12px; padding-bottom:24px }
+  .profile-cert-heading { grid-template-columns:minmax(0,1fr) auto; gap:12px; padding-bottom:var(--space-group)}
   .profile-cert-heading h2 { grid-column:1; grid-row:1; font-size:clamp(1.3rem,6vw,1.85rem) }
   .profile-cert-heading .about-arrows { grid-column:2; grid-row:1 }
   .profile-cert-heading p { grid-column:1/-1; grid-row:2 }
 }
 
 
-.about-cv-link,.about-cv-link:hover { margin-top:22px; background:transparent }
+.about-cv-link,.about-cv-link:hover { margin-top:var(--space-control); background:transparent }
 #profile-certifications { scroll-margin-top:100px }
 button.profile-cert-image { border:0; background:transparent; padding:0; min-width:44px; min-height:44px; cursor:pointer; align-self:center }
 
@@ -96,9 +96,9 @@ button.profile-cert-image { border:0; background:transparent; padding:0; min-wid
 .profile-object-dialog header .modal-close-button { flex:none }
 
 @media(min-width:1280px) { .profile-cert-track { grid-auto-columns:calc((100% - 56px)/3) } }
-@media(min-width:1920px) { .about-page .page-container { width:min(2400px,calc(100% - clamp(96px,5vw,192px))) } }
-@media(max-width:760px) { .about-page .page-container { width:calc(100% - 40px) } }
-@media(max-width:360px) { .about-page .page-container { width:calc(100% - 32px) } }
+@media(min-width:1920px) { .about-page .page-container { width:var(--content-width)} }
+@media(max-width:760px) { .about-page .page-container { width:var(--content-width)} }
+@media(max-width:360px) { .about-page .page-container { width:var(--content-width)} }
 
 @media(min-width:1280px) {
   .about-nearby,.about-stage,.about-journey-bottom { width:100%; margin-inline:auto }
@@ -108,23 +108,23 @@ button.profile-cert-image { border:0; background:transparent; padding:0; min-wid
 }
 
 @media(min-width:1920px) {
-  .about-intro-grid { gap:clamp(80px,5.55vw,144px); padding-block:clamp(55px,3.82vw,100px) }
+  .about-intro-grid { gap:clamp(80px,5.55vw,144px); padding-block:var(--space-section)}
   .about-intro h1 { font-size:clamp(4.2rem,4.6vw,6rem) }
   .about-bio,.about-identity p,.about-journey-heading p,.about-skills>p,.profile-cert-heading p { font-size:clamp(1rem,1.11vw,1.75rem) }
   .about-portrait { max-width:clamp(370px,21.53vw,560px) }
   .about-portrait img { height:clamp(440px,25.35vw,660px) }
   .about-portrait figcaption,.about-step-context,.about-journey-bottom,.profile-object-help { font-size:clamp(.8rem,.9vw,1.375rem) }
-  .about-journey,.about-skills,.about-certifications { padding-block:clamp(48px,3.33vw,86px) }
+  .about-journey,.about-skills,.about-certifications { padding-block:var(--space-section)}
   .about-page h2,.profile-cert-heading h2 { font-size:clamp(2.7rem,2.8vw,4.5rem) }
   .about-arrows { gap:clamp(10px,.7vw,18px) }
   .about-arrows button { width:clamp(48px,3.33vw,80px); height:clamp(48px,3.33vw,80px) }
   .about-arrows svg { width:clamp(24px,1.67vw,40px); height:clamp(24px,1.67vw,40px) }
-  .about-nearby { margin-top:clamp(30px,2.1vw,54px); padding-bottom:clamp(18px,1.25vw,32px) }
+  .about-nearby { margin-top:var(--space-group); padding-bottom:clamp(18px,1.25vw,32px) }
   .about-nearby button { font-size:clamp(1rem,1.11vw,1.75rem) }
   .about-nearby button span { font-size:clamp(.77rem,.86vw,1.375rem) }
-  .about-stage { min-height:clamp(500px,34.72vw,900px); gap:clamp(55px,4vw,104px); padding-top:clamp(32px,2.22vw,58px) }
+  .about-stage { min-height:clamp(500px,34.72vw,900px); gap:clamp(55px,4vw,104px); padding-top:var(--space-group)}
   .profile-object-host { height:clamp(450px,27.1vw,720px) }
-  .about-stage-date { font-size:clamp(2.4rem,2.67vw,4.25rem); margin-bottom:clamp(20px,1.4vw,36px) }
+  .about-stage-date { font-size:clamp(2.4rem,2.67vw,4.25rem); margin-bottom:var(--space-text)}
   .about-stage-copy h3 { font-size:clamp(2.5rem,2.78vw,4.5rem) }
   .about-step-subtitle,.about-step-body { font-size:clamp(1.08rem,1.2vw,1.875rem) }
   .about-stage-copy li,.about-step-note { font-size:clamp(.9rem,1vw,1.625rem) }

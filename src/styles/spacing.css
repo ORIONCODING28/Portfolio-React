@@ -1,0 +1,36 @@
+/* Shared page rhythm. Artwork dimensions and reading measures remain independent. */
+:root {
+  --page-gutter:32px;
+  --content-max:1680px;
+  --content-width:min(var(--content-max),calc(100% - var(--page-gutter) * 2));
+  --space-text:16px;
+  --space-control:24px;
+  --space-group:32px;
+  --space-section:56px;
+  --space-page-start:40px;
+  --space-grid:32px;
+}
+@media(max-width:767px) {
+  :root {
+    --page-gutter:20px;
+    --space-text:12px;
+    --space-control:20px;
+    --space-group:24px;
+    --space-section:40px;
+    --space-page-start:32px;
+    --space-grid:24px;
+  }
+}
+@media(max-width:359px) { :root { --page-gutter:16px } }
+@media(min-width:1920px) {
+  :root {
+    --page-gutter:clamp(48px,2.5vw,96px);
+    --content-max:2400px;
+    --space-text:24px;
+    --space-control:32px;
+    --space-group:40px;
+    --space-section:clamp(64px,3.3vw,88px);
+    --space-page-start:64px;
+    --space-grid:48px;
+  }
+}
