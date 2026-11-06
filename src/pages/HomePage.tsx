@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import type { GalaxyController } from '../graphics/createGalaxy';
+import type { GalaxyController, GalaxyPresentation } from '../graphics/createGalaxy';
 import { useHeroScroll } from '../hooks/useHeroScroll';
 import { useHomeMotion } from '../hooks/useHomeMotion';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -52,8 +52,8 @@ export function HomePage() {
   const motionScope = useRef<HTMLDivElement>(null);
   useHomeMotion(motionScope);
   const galaxy = useRef<GalaxyController | null>(null);
-  const formation = useRef(0);
-  useHeroScroll(motionScope, galaxy, formation);
+  const presentation = useRef<GalaxyPresentation | null>(null);
+  useHeroScroll(motionScope, galaxy, presentation);
   const { copy, isEnglish } = usePortfolio();
   const text = content[isEnglish ? 'en' : 'it'];
   return <div className="immersive-home" ref={motionScope}>
@@ -64,8 +64,8 @@ export function HomePage() {
         <Link className="button home-outline-button" to="/projects">{copy.explore}</Link>
         <button className="terminal-link text-link" type="button" aria-haspopup="dialog" aria-controls="portfolio-terminal" onClick={() => setTerminalOpen(true)}><Terminal size={20} aria-hidden="true" />{copy.terminal}</button>
       </div>
-      <div className="hero-art"><GalaxyVisual controller={galaxy} formation={formation} /></div>
-      <span className="hero-scroll-hint" aria-hidden="true">{isEnglish ? 'Scroll to explore' : 'Scorri per esplorare'}<span /></span>
+      <div className="hero-art" aria-hidden="true" />
+      <GalaxyVisual controller={galaxy} presentation={presentation} prompt={isEnglish ? 'SCROLL' : 'SCORRI'} />
     </section></div>
 
     <section className="home-capabilities page-container" aria-labelledby="capabilities-title">

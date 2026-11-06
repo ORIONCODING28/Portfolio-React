@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { heroOpeningScale, heroScrollFrame } from '../src/domain/heroScroll.ts';
+import { heroOpeningScale, heroScrollDistance, heroScrollFrame } from '../src/domain/heroScroll.ts';
 
 test('constellation forms centrally before travelling and revealing the home copy', () => {
   assert.deepEqual(heroScrollFrame(0,0,600),{progress:0,formation:0,remaining:1,copy:0});
@@ -8,7 +8,7 @@ test('constellation forms centrally before travelling and revealing the home cop
   assert.ok(gathering.formation>0 && gathering.formation<1);
   assert.equal(gathering.remaining,1);
   assert.equal(gathering.copy,0);
-  const assembled=heroScrollFrame(270,0,600);
+  const assembled=heroScrollFrame(372,0,600);
   assert.equal(assembled.formation,1);
   assert.equal(assembled.remaining,1);
   assert.equal(assembled.copy,0);
@@ -36,4 +36,14 @@ test('central composition stays moderate on phone, tablet, laptop and 2560px scr
     assert.ok(height*scale<=vh);
   }
   assert.equal(heroOpeningScale(0,0,390,700),1);
+});
+
+test('mobile gestures finish the sequence quickly and desktop has no long closing hold', () => {
+  for(const [width,height] of [[320,740],[390,844],[768,1024],[1280,720],[2560,1440]]) {
+    const distance=heroScrollDistance(width,height);
+    assert.ok(distance<=320);
+    if(width<640)assert.ok(distance<=180);
+    assert.equal(heroScrollFrame(distance,0,distance).copy,1);
+    assert.ok(distance*(1-.62)<=122);
+  }
 });

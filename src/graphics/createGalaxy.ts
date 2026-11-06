@@ -1,10 +1,11 @@
-import { heroOpeningScale } from '../domain/heroScroll';
+import { createScrollPrompt } from './createScrollPrompt';
 import { bindSceneRecovery } from './bindSceneRecovery';
 import * as THREE from 'three';
 import { fitGalaxyCamera, getGalaxyPointScale } from './fitGalaxyCamera';
 
+export interface GalaxyPresentation { left:number; top:number; width:number; height:number; formation:number }
 export interface GalaxyController {
-  setFormation: (formation: number) => void;
+  setPresentation: (presentation: GalaxyPresentation) => void;
   setPaused: (paused: boolean) => void;
   setTheme: (dark: boolean) => void;
   dispose: () => void;
@@ -22,6 +23,13 @@ class AngularGalaxy implements GalaxyController {
   private orbitRings!: THREE.Group;
   private mainGroup!: THREE.Group;
   private centerText!: THREE.Sprite;
+  private currentLabelSize=0;
+  private scrollPrompt!: ReturnType<typeof createScrollPrompt>;
+  private presentation: GalaxyPresentation | null = null;
+  private fittedAspect = 0;
+  private fittedZoom = 1;
+  private readonly clock = {value:0};
+  private readonly pixelRatio = {value:1};
   private constellationPoints?: THREE.PointsMaterial;
   private readonly compactMedia = matchMedia('(max-width: 1100px), (pointer: coarse)');
   private lastFrameTime: number | null = null;
@@ -31,6 +39,7 @@ class AngularGalaxy implements GalaxyController {
   private readonly orbitSpeed = Math.PI * 2 / 40; // one complete revolution every 40 seconds
   private animationId: number | null = null;
   private host: HTMLElement;
+  private promptLabel: string;
   private paused: boolean;
   private dark: boolean;
   private visible = true;
@@ -39,8 +48,9 @@ class AngularGalaxy implements GalaxyController {
   private intersectionObserver: IntersectionObserver;
   private unbindRecovery: () => void;
 
-  constructor(host: HTMLElement, dark: boolean, paused: boolean) {
+  constructor(host: HTMLElement, dark: boolean, paused: boolean, promptLabel: string) {
     this.host = host;
+    this.promptLabel = promptLabel;
     this.paused = paused;
     this.dark = dark;
     this.galaxyColors = dark ? this.darkGalaxyColors : this.lightGalaxyColors;
@@ -60,26 +70,35 @@ class AngularGalaxy implements GalaxyController {
     this.sync();
   }
 
-  private resize = (): void => {
-    if (this.disposed || !this.host.clientWidth || !this.host.clientHeight) return;
-    this.camera.aspect = this.host.clientWidth / this.host.clientHeight;
-    this.camera.position.copy(this.initialCameraPosition);
-    this.camera.lookAt(0, 0, 0);
-    this.camera.updateProjectionMatrix();
-    this.camera.updateMatrixWorld(true);
-    this.mainGroup.updateMatrixWorld(true);
-    if (this.host.closest('.home-hero')) {
-      fitGalaxyCamera(this.camera, [this.coreSphere, ...this.orbitRings.children.filter((object): object is ParticleScene => object instanceof THREE.Points)]);
+  private projectPresentation(): void {
+    const width=this.host.clientWidth,height=this.host.clientHeight;
+    const box=this.presentation ?? {left:0,top:0,width,height,formation:1};
+    const aspect=box.width/box.height;
+    if(Math.abs(aspect-this.fittedAspect)>.0001){
+      this.camera.clearViewOffset();this.camera.aspect=aspect;
+      this.camera.position.copy(this.initialCameraPosition);this.camera.lookAt(0,0,0);
+      this.camera.updateProjectionMatrix();this.camera.updateMatrixWorld(true);this.mainGroup.updateMatrixWorld(true);
+      fitGalaxyCamera(this.camera,[this.coreSphere,...this.orbitRings.children.filter((object):object is ParticleScene=>object instanceof THREE.Points)]);
+      this.fittedZoom=this.camera.zoom;this.fittedAspect=aspect;
     }
-    const intro = this.host.closest('.home-intro');
-    const headerHeight = document.querySelector('.site-header')?.getBoundingClientRect().height ?? 80;
-    const openingScale = intro ? heroOpeningScale(this.host.clientWidth, this.host.clientHeight, document.documentElement.clientWidth, window.innerHeight - headerHeight) : 1;
-    // Allocate the enlarged presentation once per resize, not on every scroll frame.
-    const pixelRatio = Math.min(window.devicePixelRatio * Math.min(openingScale, 2), intro ? 2.5 : this.compactMedia.matches ? 1.5 : 2);
-    this.renderer.setPixelRatio(pixelRatio);
-    this.particleProjection.value = getGalaxyPointScale(this.camera, this.host.clientHeight, pixelRatio);
-    this.renderer.setSize(this.host.clientWidth, this.host.clientHeight, false);
-    this.renderer.render(this.scene, this.camera);
+    this.camera.zoom=this.fittedZoom;
+    // Expand the camera beyond the resting art slot instead of cropping particles to a card.
+    this.camera.setViewOffset(box.width,box.height,-box.left,-box.top,width,height);
+    this.particleProjection.value=getGalaxyPointScale(this.camera,box.height,this.renderer.getPixelRatio());
+    const textWidth=Math.min(300,width*.7);
+    this.scrollPrompt.material.uniforms.promptScale.value.set(textWidth/width,textWidth/4/height);
+    this.scrollPrompt.material.uniforms.promptCentre.value.set((box.left+box.width/2)/width*2-1,1-(box.top+box.height/2)/height*2);
+  }
+
+  private resize = (): void => {
+    if(this.disposed||!this.host.clientWidth||!this.host.clientHeight)return;
+    const width=this.host.clientWidth,height=this.host.clientHeight;
+    const pixelRatio=Math.min(window.devicePixelRatio||1,this.compactMedia.matches?1.5:2,Math.sqrt(4000000/(width*height)));
+    this.pixelRatio.value=pixelRatio;this.renderer.setPixelRatio(pixelRatio);
+    this.renderer.setSize(width,height,false);
+    this.scrollPrompt.material.uniforms.pixelRatio.value=pixelRatio;
+    if(this.currentLabelSize!==this.labelSize())this.updateTextColors();
+    this.projectPresentation();this.renderer.render(this.scene,this.camera);
   };
 
   private sync = (): void => {
@@ -91,12 +110,13 @@ class AngularGalaxy implements GalaxyController {
     }
   };
 
-  setFormation(value: number): void {
-    const next = THREE.MathUtils.clamp(value, 0, 1);
-    if (next === this.formation.value) return;
-    this.formation.value = next;
-    this.centerText.material.opacity = THREE.MathUtils.smoothstep(next, .65, 1);
-    if (this.visible && !document.hidden && !this.renderer.getContext().isContextLost()) this.renderer.render(this.scene, this.camera);
+  setPresentation(presentation: GalaxyPresentation): void {
+    this.presentation=presentation;
+    const value=THREE.MathUtils.clamp(presentation.formation,0,1);
+    this.formation.value=value;
+    this.centerText.material.opacity=THREE.MathUtils.smoothstep(value,.65,1);
+    this.projectPresentation();
+    if(this.visible&&!document.hidden&&!this.renderer.getContext().isContextLost())this.renderer.render(this.scene,this.camera);
   }
 
   setPaused(paused: boolean): void { this.paused = paused; this.sync(); }
@@ -109,6 +129,7 @@ class AngularGalaxy implements GalaxyController {
     this.currentTextColor = dark ? this.darkTextColor : this.lightTextColor;
     this.currentTechColor = dark ? this.darkTechColor : this.lightTechColor;
     this.constellationPoints?.color.set(this.currentTextColor);
+    this.scrollPrompt.material.uniforms.tint.value.set(dark ? 0x00d9ff : 0x0755c9);
     this.updateGalaxyColors();
     this.updateTextColors();
     this.renderer.render(this.scene, this.camera);
@@ -175,25 +196,27 @@ class AngularGalaxy implements GalaxyController {
       attribute float size;
       attribute vec4 scatter;
       uniform float formation;
+      uniform float cloudPixelRatio;
       varying float particleVisibility;
       varying vec3 vColor;
       varying float vDistance;
       uniform float time;
       uniform float particleProjection;
-      
       void main() {
-        vColor = color;
-        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-        vDistance = -mvPosition.z;
-        float pulse = sin(time * 2.0 + length(position)) * 0.15 + 1.0;
-        vec3 pos = mix(scatter.xyz, position, formation);
-        particleVisibility = mix(step(scatter.w, .025) * .55, 1., smoothstep(.1, .85, formation));
-        pos.x += sin(time + position.z * 0.5) * 0.05;
-        pos.y += cos(time + position.x * 0.5) * 0.05;
-        pos.z += sin(time + position.y * 0.5) * 0.05;
-        mvPosition = modelViewMatrix * vec4(pos, 1.0);
-        gl_PointSize = size * (particleProjection / -mvPosition.z) * pulse;
-        gl_Position = projectionMatrix * mvPosition;
+        vColor=color;
+        // Finished geometry retains its approved static shape. Only uncollected dust drifts.
+        vec3 pos=position+vec3(sin(position.z*.5),cos(position.x*.5),sin(position.y*.5))*.05;
+        vec4 target=projectionMatrix*modelViewMatrix*vec4(pos,1.);
+        vec4 viewPosition=modelViewMatrix*vec4(pos,1.);vDistance=-viewPosition.z;
+        float ambient=step(scatter.w,.012);
+        float gather=formation*(1.-ambient);
+        vec2 drift=vec2(sin(time*.35+scatter.z*8.),cos(time*.28+scatter.z*11.))*.018;
+        vec2 cloud=mod(scatter.xy+drift+1.,2.)-1.;
+        gl_Position=vec4(mix(cloud,target.xy/target.w,gather),target.z/target.w,1.);
+        particleVisibility=mix(step(scatter.w,.065)*.65,1.,smoothstep(.05,.8,formation));
+        particleVisibility=mix(particleVisibility,.32,ambient);
+        float projected=size*(particleProjection/-viewPosition.z)*(sin(length(position))*.15+1.);
+        gl_PointSize=mix((1.4+scatter.w*1.6)*cloudPixelRatio,projected,gather);
       }
     `,
     fragmentShader: `
@@ -214,7 +237,7 @@ class AngularGalaxy implements GalaxyController {
         }
         float glow = exp(-r * 2.5);
         float outerGlow = exp(-r * 1.5) * 0.3;
-        vec3 finalColor = vColor * (1.2 + sin(time * 0.5) * 0.1);
+        vec3 finalColor = vColor * 1.2;
         finalColor += vec3(0.2, 0.4, 0.6) * outerGlow;
         float distanceFade = 1.0 - smoothstep(0.0, 50.0, vDistance);
         float intensity = mix(0.7, 1.0, distanceFade);
@@ -265,7 +288,8 @@ class AngularGalaxy implements GalaxyController {
     this.mainGroup.add(this.coreSphere);
     this.mainGroup.add(this.orbitRings);
 
-    const centerTextSize = isMobile ? 49 : 66;
+    const centerTextSize = this.labelSize();
+    this.currentLabelSize=centerTextSize;
     this.centerText = this.createTextSprite('WEB & MOBILE\nDEVELOPER', centerTextSize, this.currentTextColor);
     this.centerText.position.set(0, 0, 0);
     this.mainGroup.add(this.centerText);
@@ -283,6 +307,8 @@ class AngularGalaxy implements GalaxyController {
 
     // Home uses one shared section-wide star field, including behind its copy.
     if (!this.host.closest('.home-hero')) this.mainGroup.add(this.createConstellation());
+    this.scrollPrompt=createScrollPrompt(this.promptLabel,this.formation,this.clock,this.dark);
+    this.mainGroup.add(this.scrollPrompt);
     this.scene.add(this.mainGroup);
   }
 
@@ -304,7 +330,7 @@ class AngularGalaxy implements GalaxyController {
       const seed = (Math.sin(i * 127.1 + 311.7) * 43758.5453) % 1;
       const seed2 = (Math.sin(i * 269.5 + 183.3) * 43758.5453) % 1;
       const seed3 = (Math.sin(i * 419.2 + 73.1) * 43758.5453) % 1;
-      scatter.push(seed * 14, seed2 * 10, seed3 * 4, Math.abs((Math.sin(i * 53.9 + 17.3) * 43758.5453) % 1));
+      scatter.push(seed * .98, seed2 * .98, seed3, Math.abs((Math.sin(i * 53.9 + 17.3) * 43758.5453) % 1));
 
       const colorPos = i / particleCount;
       const color1 = colors[Math.floor(colorPos * (colors.length - 1))];
@@ -323,7 +349,7 @@ class AngularGalaxy implements GalaxyController {
 
     const material = new THREE.ShaderMaterial({
       uniforms: {
-        formation: this.formation, time: { value: 0 }, darkMode: { value: this.dark ? 1 : 0 }, particleProjection: this.particleProjection
+        cloudPixelRatio:this.pixelRatio, formation: this.formation, time: this.clock, darkMode: { value: this.dark ? 1 : 0 }, particleProjection: this.particleProjection
       },
       vertexShader: this.pointMaterialShader.vertexShader,
       fragmentShader: this.pointMaterialShader.fragmentShader,
@@ -501,6 +527,7 @@ class AngularGalaxy implements GalaxyController {
     // The ellipse meshes and all their transforms stay fixed. Only particle
     // phases advance in the vertex shader, at a constant angular speed.
     this.orbitTime += dt;
+    this.clock.value += dt;
     this.orbitRings.children.forEach(ring => {
       (ring as ParticleScene).material.uniforms['flowTime'].value = this.orbitTime;
     });
@@ -549,9 +576,15 @@ class AngularGalaxy implements GalaxyController {
     }
   }
 
+  private labelSize(): number {
+    const slot=this.host.closest('.home-hero')?.querySelector<HTMLElement>('.hero-art');
+    return (slot?.clientWidth ?? this.host.clientWidth)<768 ? 49 : 66;
+  }
+
   private updateTextColors(): void {
     if (this.centerText) {
-      const size = this.host.clientWidth < 768 ? 49 : 66;
+      const size = this.labelSize();
+      this.currentLabelSize=size;
       this.centerText.material.map?.dispose();
       this.centerText.material.map = this.textTexture('WEB & MOBILE\nDEVELOPER', size, this.currentTextColor);
       this.centerText.material.needsUpdate = true;
@@ -593,6 +626,6 @@ class AngularGalaxy implements GalaxyController {
   }
 }
 
-export function createGalaxy(host: HTMLElement, dark: boolean, initiallyPaused: boolean): GalaxyController {
-  return new AngularGalaxy(host, dark, initiallyPaused);
+export function createGalaxy(host: HTMLElement, dark: boolean, initiallyPaused: boolean, promptLabel = 'SCORRI'): GalaxyController {
+  return new AngularGalaxy(host, dark, initiallyPaused, promptLabel);
 }
