@@ -391,17 +391,6 @@ export const certificationsIT: Certification[] = [
     order: 2
   },
   {
-      "id": 3,
-      "title": "Claude Code 101",
-      "issuing_organization": "Claude Academy",
-      "issue_date": "5 novembre 2026",
-      "description": "Attestato di completamento del corso Claude Code 101, dedicato all’utilizzo di Claude Code come strumento di supporto nello sviluppo software.",
-      "image": publicAsset("/assets/certification/Attestato_Claude_Code_101.png"),
-      "badge": publicAsset("/assets/certification/Attestato_Claude_Code_101.png"),
-      "credential_url": "https://academy.claude.com/verify/350526e1eec246b9a4d7992357af1d9a",
-      "order": 3
-  },
-  {
     id: 4,
     title: 'Claude 101',
     issuing_organization: 'Claude Academy',
@@ -410,7 +399,18 @@ export const certificationsIT: Certification[] = [
     image: publicAsset('/assets/certification/Attestato_Claude_101.png'),
     badge: publicAsset('/assets/certification/Attestato_Claude_101.png'),
     credential_url: 'https://academy.claude.com/verify/9d312e76cf2914e9a87d598aa7a47cf8',
-    order: 4
+    order: 3
+  },
+  {
+      "id": 3,
+      "title": "Claude Code 101",
+      "issuing_organization": "Claude Academy",
+      "issue_date": "5 novembre 2026",
+      "description": "Attestato di completamento del corso Claude Code 101, dedicato all’utilizzo di Claude Code come strumento di supporto nello sviluppo software.",
+      "image": publicAsset("/assets/certification/Attestato_Claude_Code_101.png"),
+      "badge": publicAsset("/assets/certification/Attestato_Claude_Code_101.png"),
+      "credential_url": "https://academy.claude.com/verify/350526e1eec246b9a4d7992357af1d9a",
+      "order": 4
   },
   {
     id: 5,
@@ -449,17 +449,6 @@ export const certificationsEN: Certification[] = [
     order: 2
   },
   {
-      "id": 3,
-      "title": "Claude Code 101",
-      "issuing_organization": "Claude Academy",
-      "issue_date": "5 November 2026",
-      "description": "Certificate of completion for Claude Code 101, a course on using Claude Code to support software development.",
-      "image": publicAsset("/assets/certification/Attestato_Claude_Code_101.png"),
-      "badge": publicAsset("/assets/certification/Attestato_Claude_Code_101.png"),
-      "credential_url": "https://academy.claude.com/verify/350526e1eec246b9a4d7992357af1d9a",
-      "order": 3
-  },
-  {
     id: 4,
     title: 'Claude 101',
     issuing_organization: 'Claude Academy',
@@ -468,7 +457,18 @@ export const certificationsEN: Certification[] = [
     image: publicAsset('/assets/certification/Attestato_Claude_101.png'),
     badge: publicAsset('/assets/certification/Attestato_Claude_101.png'),
     credential_url: 'https://academy.claude.com/verify/9d312e76cf2914e9a87d598aa7a47cf8',
-    order: 4
+    order: 3
+  },
+  {
+      "id": 3,
+      "title": "Claude Code 101",
+      "issuing_organization": "Claude Academy",
+      "issue_date": "5 November 2026",
+      "description": "Certificate of completion for Claude Code 101, a course on using Claude Code to support software development.",
+      "image": publicAsset("/assets/certification/Attestato_Claude_Code_101.png"),
+      "badge": publicAsset("/assets/certification/Attestato_Claude_Code_101.png"),
+      "credential_url": "https://academy.claude.com/verify/350526e1eec246b9a4d7992357af1d9a",
+      "order": 4
   },
   {
     id: 5,
