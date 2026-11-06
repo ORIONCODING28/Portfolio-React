@@ -1,26 +1,25 @@
 # Home: prova locale delle animazioni
 
-Branch: `local/scroll-choreography`. Base pubblicata: `e515190`.
+Branch: `local/scroll-choreography`. Online invariato, nessun push/deploy autorizzato.
 
-Questa modifica non va pubblicata finché Giuseppe non approva la versione locale.
+## Intro a tempo, identica su tutti i formati
 
-- Canvas WebGL esteso a tutta la prima schermata: costellazione in movimento continuo e SCORRI composto da particelle (SCROLL in inglese). Le particelle convergono da tutta la superficie nella galassia centrale, che raggiunge la composizione originale mentre appaiono i testi. Il tutto è reversibile, senza intercettare wheel/touch. Lo scroll massimo è 180px su mobile, 230px su tablet, 320px su desktop; non esiste un tratto finale di attesa.
-- Invito SCORRI/SCROLL più grande, font Orbitron locale (SIL OFL inclusa), luce cyan/zaffiro e barra verticale di particelle con bagliore in movimento. Il font della scritta nella sfera resta invariato.
-- Su mobile: titolo, descrizione e pulsanti visibili subito; galassia sotto, che si forma nella sua posizione durante il normale scroll. Nessun pinning, nessun altezza aggiunta alla pagina, nessuno spostamento della galassia attraverso i testi. La progressione delle particelle resta reversibile.
-- Rimossa l’altezza minima di una viewport dalla composizione finale. L’intro iniziale resta a tutto schermo usando una maschera del canvas, senza mantenere vuoto nel flusso della pagina. A 2560x1440 si eliminano 541px di altezza forzata; la sezione successiva segue il fondo della hero.
-- Testo centrale: WEB & MOBILE / DEVELOPER. Colori e geometria delle orbite conservati.
-- Rotazione continua dei dispositivi: comincia quando il centro del modello entra nella zona visibile, rallenta nella posizione frontale al centro dello schermo e prosegue nella stessa direzione durante l’uscita. Nessun tratto fermo. Esplorazione manuale solo nella modale.
-- Percorso: sosta di lettura su ogni stella, poi viaggio della scia soltanto sul collegamento verso la successiva. Stella e testo si attivano all’arrivo; l’ultima fase ha la stessa sosta prima della dissolvenza e del nuovo ciclo. Il resto del percorso resta discreto e la polvere è ferma. La modale mette in pausa il punto corrente e lo riprende alla chiusura. Uscendo dalla sezione la sequenza si azzera per il prossimo ingresso.
-- Le brevi entrate dei contenuti si ripetono dopo l’uscita dalla viewport.
+- All’apertura: soltanto costellazione in movimento e invito SCORRI/SCROLL composto da particelle.
+- Il primo gesto (rotella, swipe singolo o tasti di scorrimento) avvia una sequenza di 1800 ms: formazione centrale della galassia, spostamento nella posizione finale, comparsa dei testi.
+- Su mobile la composizione finale ha titolo, descrizione e pulsanti sopra, galassia sotto. Nessun testo visibile sopra SCORRI durante l’apertura.
+- Lo scroll viene trattenuto soltanto per la sequenza iniziale; il gesto che l’ha avviata non trascina la pagina al footer. Nessuna altezza/spacer per completare l’effetto. Dopo l’intro, scorrimento normale.
+- La velocità del gesto non modifica il tempo della sequenza. Non ci sono code di animazioni a ogni evento wheel/touch.
+- Escape e accesso da tastiera ai contenuti chiudono l’intro; link diretti rimangono accessibili. Se WebGL non carica, il contenuto viene liberato.
+- Dalla hero composta, un gesto verso l’alto avvia immediatamente la sequenza al contrario, anche senza essere prima scesi. Tornando da sezioni inferiori, ci si ferma sulla hero composta: serve un nuovo gesto verso l’alto, senza usare l’inerzia del gesto precedente. Lo swipe iniziato sotto non avvia il ritorno; i tasti tenuti premuti non lo avviano tramite autorepeat.
+- Testo nella sfera sempre WEB & MOBILE / DEVELOPER. Geometria e colori approvati conservati.
 
-## Verifica
+## Dispositivi e percorso
 
-- Build, lint e 38 test automatici, inclusi avanzamento/ritorno, durata breve e proiezione del canvas esteso che mantiene la posizione finale della galassia. Verificato il movimento a pagina ferma confrontando due screenshot (oltre 16.000 pixel cambiano nell’area della costellazione).
-- Ultima verifica nel browser: 390, 1280 e 2560px, senza overflow orizzontale rilevato; verifica di raccolta, chiusura breve e ritorno all’invito iniziale. I test della progressione includono anche i formati tablet e laptop.
-- Raccolta delle particelle e spostamento della galassia, pose frontali, apertura e chiusura della modale del laptop, pausa/ripresa del percorso e ritorno alla prima fase al nuovo ingresso.
-- Tema chiaro e scuro. Nessun errore registrato nel browser nella verifica finale.
-- Queste sono verifiche del browser e dei formati responsive, non test fisici su iPhone/iPad/Android.
+- Dispositivi: rotazione continua con lo scroll, posizione frontale al centro della viewport e ritorno reversibile; esplorazione manuale soltanto nella modale.
+- Percorso: scia stretta e continua lungo una sola connessione, con coda che si dissolve all’arrivo. Stella bianca a riposo, cyan/zaffiro quando attiva, piccolo impulso all’arrivo e tempo di lettura. Il testo segue la stella raggiunta.
+- Ridotte le particelle del percorso da 5000 a 1600; aggiornamento visivo fino a 60 fps. Risorse e listener eliminati alla distruzione del componente.
+- La modale del percorso mantiene la pausa/ripresa nello stesso punto. Nessun blocco dello scroll nelle altre sezioni.
 
 Anteprima: http://127.0.0.1:5180/
 
-Questa iterazione comprende il nuovo viaggio tra le stelle approvato da Giuseppe. Verificati nel browser avanzamento della sequenza e pausa/ripresa della modale, oltre alla lettura immediata della home mobile e alla composizione desktop a 2560px. Nessun push o deploy eseguito.
+Le verifiche responsive nel browser non equivalgono a prove fisiche su iPhone/iPad/Android.

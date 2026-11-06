@@ -198,27 +198,21 @@
 
 .home-intro { overflow-x:clip; z-index:1 }
 
-/* Local scroll study: the resting grid remains the approved home composition. */
-.home-intro[data-intro-ready][data-intro-mode="staged"] .home-hero { position:sticky; top:var(--intro-top); min-height:0; align-content:start; z-index:2 }
+/* One timed opening on every screen. No sticky copy and no scroll spacer. */
+.home-intro .home-hero { position:relative; min-height:0 }
 .home-intro .hero-art { position:relative; z-index:2; pointer-events:none }
 .home-intro .hero-copy { z-index:3 }
-/* Full-section canvas; the art slot controls only the final composition. */
 .home-intro::before,:root:not(.dark) .home-intro::before { display:none }
 .home-intro .home-hero>.galaxy-visual { position:absolute; top:0; left:0; width:100%; height:max(100%,var(--intro-viewport,640px)); min-height:0; background:var(--bg); z-index:2; pointer-events:none }
-.home-intro .hero-art { height:clamp(390px,38vw,510px) }
-@media(min-width:640px) and (max-width:1023px) { .home-intro .hero-art { height:clamp(360px,48vw,470px) } }
-@media(max-width:639px) {
-  .home-intro .hero-art { grid-row:2; height:clamp(300px,88vw,370px) }
-  .immersive-home .home-intro .hero-copy { grid-row:1 }
-  .home-intro .home-hero { position:relative }
-}
-@media(min-width:1920px) { .home-intro .hero-art { height:clamp(560px,27vw,760px) } }
-
-/* The resting home stays compact; the initial full-screen canvas is a temporary mask. */
+.home-intro .hero-art { height:clamp(350px,33vw,460px) }
 @media(min-width:640px) {
   .immersive-home .home-intro .home-hero { padding-block:24px }
-  .home-intro .hero-art { height:clamp(350px,33vw,460px) }
   .home-capabilities { padding-top:24px }
+}
+@media(max-width:639px) {
+  .immersive-home .home-intro .home-hero { padding-block:20px; gap:12px }
+  .home-intro .hero-art { grid-row:2; height:clamp(280px,88vw,350px) }
+  .immersive-home .home-intro .hero-copy { grid-row:1 }
 }
 @media(min-width:1920px) {
   .immersive-home .home-intro .home-hero { padding-block:32px }
