@@ -122,7 +122,7 @@ class AngularGalaxy implements GalaxyController {
 
   refreshPrompt(): void {
     this.mainGroup.remove(this.scrollPrompt);
-    this.scrollPrompt.geometry.dispose();this.scrollPrompt.material.dispose();
+    this.scrollPrompt.dispose();
     this.scrollPrompt=createScrollPrompt(this.promptLabel,this.formation,this.clock,this.dark);
     this.scrollPrompt.material.uniforms.pixelRatio.value=this.pixelRatio.value;
     this.mainGroup.add(this.scrollPrompt);this.projectPresentation();
@@ -153,6 +153,7 @@ class AngularGalaxy implements GalaxyController {
     this.intersectionObserver.disconnect();
     document.removeEventListener('visibilitychange', this.sync);
     this.unbindRecovery();
+    this.mainGroup.remove(this.scrollPrompt);this.scrollPrompt.dispose();
     this.scene.traverse(object => {
       if (object instanceof THREE.Points || object instanceof THREE.LineSegments) {
         object.geometry.dispose();

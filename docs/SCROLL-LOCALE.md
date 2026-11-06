@@ -16,8 +16,8 @@ Branch: `local/scroll-choreography`. Online invariato, nessun push/deploy autori
 ## Dispositivi e percorso
 
 - Dispositivi: rotazione continua con lo scroll, posizione frontale al centro della viewport e ritorno reversibile; esplorazione manuale soltanto nella modale.
-- Percorso: scia stretta e continua lungo una sola connessione, con coda che si dissolve all’arrivo. Stella cyan/zaffiro tenue a riposo, più luminosa quando attiva, piccolo impulso all’arrivo e tempo di lettura. Il testo segue la stella raggiunta.
-- Ridotte le particelle del percorso da 5000 a 1600; aggiornamento visivo fino a 60 fps. Risorse e listener eliminati alla distruzione del componente.
+- Percorso: scia stretta e continua lungo una sola connessione, con coda che si dissolve all’arrivo. Stella bianca a riposo, cyan/zaffiro quando attiva, come nel riferimento originale, piccolo impulso all’arrivo e tempo di lettura. Il testo segue la stella raggiunta.
+- Ripristinate le 5000 particelle del percorso originale; aggiornamento visivo fino a 60 fps. Risorse e listener eliminati alla distruzione del componente.
 - La modale del percorso mantiene la pausa/ripresa nello stesso punto. Nessun blocco dello scroll nelle altre sezioni.
 
 Anteprima: http://127.0.0.1:5180/
@@ -26,7 +26,7 @@ Le verifiche responsive nel browser non equivalgono a prove fisiche su iPhone/iP
 
 ## Aggiornamento stelle e costruzione unica
 
-- SCORRI: stelle cyan a quattro punte curve, flusso continuo dall’alto verso il basso. Rimossi mouse e barra.
+- SCORRI: stelle cyan a quattro punte nitide, disegnate su piani trasparenti invece che con particelle, flusso continuo dall’alto verso il basso. Rimossi mouse e barra.
 - Il percorso si costruisce una sola volta per caricamento, resta disegnato e non si azzera uscendo dalla sezione o cambiando rotta. Dopo la costruzione continua soltanto l’impulso.
-- Stelle cyan tenue a riposo, cyan acceso al passaggio; centro più pieno e lati curvi. Dimensioni riportate vicino alle precedenti e bagliore circoscritto.
+- Aspetto finale ripreso dal codice della versione originale indicata nella foto: stelle bianche a riposo, cyan al passaggio, stessa polvere luminosa, forma e proporzioni originali. Costruzione unica mantenuta.
 - Le tappe diventano cliccabili quando sono create. Modali e pausa/ripresa del punto corrente conservate.
