@@ -2,7 +2,7 @@ export interface ProjectFeature { title: string; body: string; label?: string; h
 interface ProjectCaseStudy { context: string; role: string; overviewTitle: string; overview: string; features: ProjectFeature[] }
 const it: Record<string, ProjectCaseStudy> = {
   'progetto-parco-del-verismo': {
-    context: 'Progetto di gruppo alla Steve Jobs Academy', role: 'Interfaccia web e integrazione backend',
+    context: 'Progetto di gruppo alla Steve Jobs Academy', role: 'Sviluppo dell’interfaccia e integrazione con il backend',
     overviewTitle: 'Un sito per esplorare il Verismo',
     overview: 'Il patrimonio letterario di Giovanni Verga e Luigi Capuana, raccolto in un unico spazio: luoghi, itinerari, opere, eventi e risorse culturali.',
     features: [
@@ -14,7 +14,7 @@ const it: Record<string, ProjectCaseStudy> = {
 };
 const en: Record<string, ProjectCaseStudy> = {
   'progetto-parco-del-verismo': {
-    context:'Team project at Steve Jobs Academy',role:'Web interface and backend integration',
+    context:'Team project at Steve Jobs Academy',role:'Interface development and backend integration',
     overviewTitle:'A website for exploring Verismo',
     overview:'The literary heritage of Giovanni Verga and Luigi Capuana, brought together in one place: towns, themed itineraries, works, events and cultural resources.',
     features:[

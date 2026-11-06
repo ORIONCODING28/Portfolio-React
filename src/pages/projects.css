@@ -57,3 +57,22 @@
  .work-catalog .project-preview { aspect-ratio:1.48 }
  .work-catalog .preview-phone { width:25% }
 }
+
+/* Case-study actions follow the available space; sharing stays beside the stack. */
+.case-stack { display:grid; grid-template-columns:minmax(0,1fr); gap:32px }
+.project-share { min-width:0 }
+.project-share h3 { font-size:1rem; line-height:1.5; font-weight:500; color:var(--muted) }
+.project-share-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:14px }
+.project-share-action { display:inline-flex; align-items:center; justify-content:center; flex:none; width:44px; height:44px; padding:10px; border:1px solid var(--accent); border-radius:7px; color:var(--accent); background:transparent; text-decoration:none; cursor:pointer }
+.project-share-action svg { display:block; width:21px; height:21px; flex:none }
+.project-share-action:focus-visible { outline:2px solid var(--accent); outline-offset:4px }
+.project-share-status { display:block; min-height:1.5em; margin-top:8px; font-size:.875rem; line-height:1.5; color:var(--muted) }
+.project-share-fallback { display:block; width:100%; min-height:44px; margin-top:8px; padding:8px; color:var(--text); background:var(--bg); border:1px solid var(--accent); border-radius:7px }
+@media(min-width:1024px) {
+  .case-heading { max-width:none; display:grid; grid-template-columns:minmax(0,1fr) auto; column-gap:40px }
+  .case-heading>h1,.case-heading>p { grid-column:1 }
+  .case-heading>.case-actions { grid-column:2; grid-row:1 / span 2; justify-content:flex-end; align-self:start; max-width:360px; margin-top:0 }
+  .case-stack { grid-template-columns:minmax(0,1fr) auto; align-items:end; column-gap:48px }
+  .project-share { justify-self:end; text-align:right; max-width:300px }
+  .project-share-actions { justify-content:flex-end }
+}
