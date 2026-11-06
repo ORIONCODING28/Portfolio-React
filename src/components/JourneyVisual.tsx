@@ -49,6 +49,7 @@ export function JourneyVisual() {
         if(cancelled)return;
         try {
           controller.current=createJourneyScene(element,stage=>{
+            if(stage)buttons.current.forEach((button,index)=>{if(button)button.hidden=index>=stage.revealed;});
             const caption=label.current;
             if(!caption)return;
             caption.style.opacity=String(stage?.opacity ?? 0);

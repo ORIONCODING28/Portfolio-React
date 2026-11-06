@@ -1,9 +1,12 @@
 import { bindSceneRecovery } from './bindSceneRecovery';
 import * as THREE from 'three';
-import { journeyFrame, JOURNEY_STAGE_SECONDS, JOURNEY_HOLD_SECONDS } from './journeyTimeline';
+import { journeyFrame, journeyNodeReveal } from './journeyTimeline';
+
+// Survives route changes; a full page reload alone restarts construction.
+let pageElapsed=0;
 
 /** Reconstruct the six luminous milestones and stardust path of the approved artwork. */
-export interface JourneyStage { index: number; x: number; y: number; opacity: number }
+export interface JourneyStage { index: number; x: number; y: number; opacity: number; revealed:number }
 export interface JourneyController { select(index: number | null): void; setTheme(dark: boolean): void; dispose(): void }
 export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneyStage | null) => void, onLayout: (points: { x: number; y: number }[]) => void, dark = true): JourneyController {
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false, powerPreference: 'low-power' });
@@ -24,7 +27,7 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
   const textures: THREE.Texture[] = [];
   let seed = 731;
   const random = () => { seed = (Math.imul(seed,1664525) + 1013904223) >>> 0; return seed / 4294967296; };
-  const uniforms = { travelling:{value:0},segmentStart:{value:0},segmentEnd:{value:1},progress:{value:0}, projection:{value:1}, tint:{value:new THREE.Vector3(dark ? 0 : .02745,dark ? .83 : .33333,dark ? 1 : .78824)} };
+  const uniforms = { travelling:{value:0},segmentStart:{value:0},segmentEnd:{value:1},progress:{value:0}, built:{value:0}, projection:{value:1}, tint:{value:new THREE.Vector3(dark ? 0 : .02745,dark ? .83 : .33333,dark ? 1 : .78824)} };
   const geometry = new THREE.BufferGeometry();
   const count=1600;
   const positions=new Float32Array(count*3);
@@ -52,14 +55,14 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
   const material=new THREE.ShaderMaterial({
     uniforms, transparent:true, depthWrite:false, blending:dark ? THREE.AdditiveBlending : THREE.NormalBlending,
     vertexShader:`attribute float phase; attribute float brightness; attribute float size; attribute float trail;
-      uniform float progress; uniform float projection;uniform float travelling;uniform float segmentStart;uniform float segmentEnd;
+      uniform float progress; uniform float built; uniform float projection;uniform float travelling;uniform float segmentStart;uniform float segmentEnd;
       varying float intensity;
       void main(){
         float distance=phase-progress;
         // GLSL pow is undefined for a negative base, even with exponent 2.
         float wave=step(distance,0.)*exp(distance/.035);
         float withinSegment=step(segmentStart,phase)*step(phase,segmentEnd);
-        intensity=brightness*(trail>.5 ? .09+wave*1.25*travelling*withinSegment : .07);
+        intensity=step(phase,built)*brightness*(trail>.5 ? .09+wave*1.25*travelling*withinSegment : .07);
         gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);
         gl_PointSize=max(1.,size*projection);
       }`,
@@ -89,7 +92,7 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
   ribbonGeometry.setAttribute('side',new THREE.Float32BufferAttribute(ribbonSides,1));
   ribbonGeometry.setIndex(ribbonIndices); geometries.push(ribbonGeometry);
   const wakeUniforms={progress:uniforms.progress,segmentStart:uniforms.segmentStart,segmentEnd:uniforms.segmentEnd,
-    tint:uniforms.tint,energy:{value:0}};
+    tint:uniforms.tint,built:uniforms.built,energy:{value:0}};
   const ribbonMaterial=(width:number,opacity:number)=>{
     const result=new THREE.ShaderMaterial({
       uniforms:{...wakeUniforms,width:{value:width},opacity:{value:opacity}},
@@ -99,16 +102,17 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
         void main(){pathPhase=phase;edge=side;
           gl_Position=projectionMatrix*modelViewMatrix*vec4(position+pathNormal*side*width,1.);}`,
       fragmentShader:`uniform float progress;uniform float segmentStart;uniform float segmentEnd;
-        uniform float energy;uniform vec3 tint;uniform float opacity;varying float pathPhase;varying float edge;
+        uniform float width;uniform float energy;uniform float built;uniform vec3 tint;uniform float opacity;varying float pathPhase;varying float edge;
         void main(){float behind=progress-pathPhase;
           float link=step(segmentStart,pathPhase)*step(pathPhase,segmentEnd);
-          float wake=step(0.,behind)*exp(-max(0.,behind)/.055)*link*energy;
-          float alpha=wake*(1.-smoothstep(.15,1.,abs(edge)))*opacity;
+          float wake=step(0.,behind)*exp(-max(0.,behind)/.055)*link;
+          float base=width>.06?0.:.38*step(pathPhase,built);
+          float alpha=(base+wake*energy)*(1.-smoothstep(.15,1.,abs(edge)))*opacity;
           gl_FragColor=vec4(tint,alpha);}`,
     });
     materials.push(result);return result;
   };
-  scene.add(new THREE.Mesh(ribbonGeometry,ribbonMaterial(.12,.24)),new THREE.Mesh(ribbonGeometry,ribbonMaterial(.035,.95)));
+  scene.add(new THREE.Mesh(ribbonGeometry,ribbonMaterial(.075,.14)),new THREE.Mesh(ribbonGeometry,ribbonMaterial(.028,.95)));
   const headCanvas=document.createElement('canvas'); headCanvas.width=64; headCanvas.height=64;
   const headContext=headCanvas.getContext('2d');
   if(!headContext){renderer.dispose();renderer.domElement.remove();throw new Error('Canvas unavailable');}
@@ -120,68 +124,70 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
   const headTexture=new THREE.CanvasTexture(headCanvas); textures.push(headTexture);
   const headMaterial=new THREE.SpriteMaterial({map:headTexture,color:dark ? 0x00d9f5 : 0x0755c9,transparent:true,depthWrite:false});
   materials.push(headMaterial);
-  const head=new THREE.Sprite(headMaterial); head.scale.setScalar(.32); scene.add(head);
+  const head=new THREE.Sprite(headMaterial); head.scale.setScalar(.22); scene.add(head);
   const starCanvas=document.createElement('canvas'); starCanvas.width=128; starCanvas.height=128;
   const context=starCanvas.getContext('2d');
   if(!context){renderer.dispose();renderer.domElement.remove();throw new Error('Canvas unavailable');}
-  const halo=context.createRadialGradient(64,64,0,64,64,48);
-  halo.addColorStop(0,'rgba(255,255,255,.28)'); halo.addColorStop(1,'rgba(255,255,255,0)');
+  const halo=context.createRadialGradient(64,64,0,64,64,28);
+  halo.addColorStop(0,'rgba(255,255,255,.08)'); halo.addColorStop(1,'rgba(255,255,255,0)');
   context.fillStyle=halo; context.fillRect(0,0,128,128);
   context.beginPath(); context.moveTo(64,3);
-  context.lineTo(70,57); context.lineTo(121,64); context.lineTo(70,71);
-  context.lineTo(64,125); context.lineTo(58,71); context.lineTo(7,64); context.lineTo(58,57);
+  context.quadraticCurveTo(73,55,121,64);
+  context.quadraticCurveTo(73,73,64,125);
+  context.quadraticCurveTo(55,73,7,64);
+  context.quadraticCurveTo(55,55,64,3);
   context.closePath();
   context.fillStyle='white'; context.fill();
   const starTexture=new THREE.CanvasTexture(starCanvas); textures.push(starTexture);
-  const restingColor=new THREE.Color(dark ? 0xffffff : 0xe3e7e8), litColor=new THREE.Color(dark ? 0x00d9f5 : 0x0755c9);
-  const nodes: { light: THREE.SpriteMaterial; sprite: THREE.Sprite; size:number; phase: number; position: THREE.Vector3 }[]=[];
+  const restingColor=new THREE.Color(dark ? 0x008da8 : 0x336fa7), litColor=new THREE.Color(dark ? 0x00d9f5 : 0x0755c9);
+  const nodes: { light: THREE.SpriteMaterial; sprite: THREE.Sprite; flare:THREE.Sprite; size:number; phase: number; position: THREE.Vector3 }[]=[];
   const nodePositions=[[-5.6,-1.62,0,.13],[-3.72,-.96,.12,.25],[-1.2,.02,0,.17],[2.85,-.97,.15,.23],[5.2,.55,0,.17],[7.4,1.62,.1,.26]];
   for (const [x,y,z,radius] of nodePositions) {
     const light=new THREE.SpriteMaterial({map:starTexture,color:restingColor,transparent:true,depthWrite:false,blending:THREE.NormalBlending,opacity:.55});
     materials.push(light);
-    const star=new THREE.Sprite(light); star.position.set(x,y,z); const size=.75+radius*1.8; star.scale.set(size,size*1.45,1); scene.add(star);
+    const star=new THREE.Sprite(light); star.position.set(x,y,z); const size=(.75+radius*1.8)*.8; star.scale.set(size,size*1.2,1); scene.add(star);
     let phase=0, nearest=Infinity;
     for(let i=0;i<=256;i++) {
       const distance=curve.getPointAt(i/256).distanceToSquared(star.position);
       if(distance<nearest){nearest=distance;phase=i/256;}
     }
-    nodes.push({light,sprite:star,size,phase,position:star.position});
+    const flareMaterial=new THREE.SpriteMaterial({map:headTexture,color:litColor,transparent:true,depthWrite:false,opacity:0});
+    materials.push(flareMaterial);
+    const flare=new THREE.Sprite(flareMaterial);flare.position.copy(star.position);flare.scale.setScalar(size);scene.add(flare);
+    nodes.push({light,sprite:star,flare,size,phase,position:star.position});
   }
   const nodePhases=nodes.map(node=>node.phase);
   let selected: number | null=null;
-  let visible=false, frame=0, last=0, elapsed=0;
+  let visible=false, frame=0, last=0, elapsed=pageElapsed;
   const updateSequence=()=>{
     const current=journeyFrame(elapsed,nodePhases);
     const progress=current.progress,activeIndex=current.index;
     uniforms.progress.value=progress;
-    // During the reading pause, the incoming wake gently dissolves at the
-    // destination instead of cutting off when the active index changes.
-    const cycle=(nodes.length-1)*JOURNEY_STAGE_SECONDS+JOURNEY_HOLD_SECONDS+.4;
-    const local=elapsed%cycle-activeIndex*JOURNEY_STAGE_SECONDS;
-    const travelling=current.travel>0;
-    const linkIndex=travelling ? activeIndex : Math.max(0,activeIndex-1);
-    const arrival=Math.exp(-Math.max(0,local)*5);
-    const energy=travelling ? Math.min(1,current.travel/.08) : activeIndex>0 ? arrival : 0;
-    uniforms.segmentStart.value=nodePhases[linkIndex];
-    uniforms.segmentEnd.value=nodePhases[Math.min(linkIndex+1,nodes.length-1)];
-    uniforms.travelling.value=energy;
-    wakeUniforms.energy.value=energy*current.fade;
+    uniforms.built.value=current.builtProgress;
+    uniforms.segmentStart.value=nodePhases[current.linkIndex];
+    uniforms.segmentEnd.value=nodePhases[Math.min(current.linkIndex+1,nodes.length-1)];
+    uniforms.travelling.value=current.energy;
+    wakeUniforms.energy.value=current.energy;
     head.position.copy(curve.getPointAt(Math.min(1,progress)));
-    headMaterial.opacity=energy*.9*current.fade;
-    nodes.forEach(({light,sprite,size},index)=>{
+    headMaterial.opacity=current.energy*.9;
+    nodes.forEach(({light,sprite,flare,size},index)=>{
+      const reveal=journeyNodeReveal(elapsed,index);
       const active=index===activeIndex ? current.labelOpacity : 0;
-      const restingOpacity=dark ? .65 : 1;
-      light.opacity=restingOpacity+(1-restingOpacity)*active;
+      light.opacity=reveal*(.65+.35*active);
       light.color.copy(restingColor).lerp(litColor,active);
-      const scale=size*(1+arrival*active*.12);
-      sprite.scale.set(scale,scale*1.45,1);
+      const scale=size*reveal*(1+current.arrival*active*.1);
+      sprite.scale.set(scale,scale*1.2,1);
+      const flareLight=flare.material as THREE.SpriteMaterial;
+      flareLight.opacity=reveal*active*(.06+.06*current.arrival);
+      flareLight.color.copy(litColor);
     });
     const {position}=nodes[activeIndex];
     const stage: JourneyStage={
       index:activeIndex,
       x:(position.x-camera.left)/(camera.right-camera.left)*100,
       y:(camera.top-position.y)/(camera.top-camera.bottom)*100,
-      opacity:current.labelOpacity,
+      opacity:current.labelOpacity*journeyNodeReveal(elapsed,activeIndex),
+      revealed:current.revealed,
     };
     onStage(visible ? stage : null);
   };
@@ -190,7 +196,7 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
     frame=0;
     if(!visible || document.hidden || renderer.getContext().isContextLost() || selected!==null)return;
     if(now-last>=1000/60){
-      const delta=last ? Math.min((now-last)/1000,.1) : 0; elapsed+=delta; last=now;
+      const delta=last ? Math.min((now-last)/1000,.1) : 0; elapsed+=delta; pageElapsed=elapsed; last=now;
       updateSequence();
       render();
     }
@@ -207,7 +213,7 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
     renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
     renderer.setSize(width,height,false);
     const aspect=width/height; camera.left=-9.4; camera.right=10.6; camera.top=10/aspect; camera.bottom=-camera.top; camera.updateProjectionMatrix();
-    uniforms.projection.value=width*renderer.getPixelRatio()/20;
+    uniforms.projection.value=width*renderer.getPixelRatio()/(camera.right-camera.left);
     onLayout(nodes.map(({position})=>({x:(position.x-camera.left)/(camera.right-camera.left)*100,y:(camera.top-position.y)/(camera.top-camera.bottom)*100})));
     updateSequence(); render();
   };
@@ -216,7 +222,6 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
     const next=entries[0].isIntersecting && entries[0].intersectionRatio>=.4;
     if(next===visible)return;
     visible=next;
-    if(!visible)elapsed=0;
     if(visible)updateSequence(); else onStage(null);
     sync();
   },{threshold:[0,.4],rootMargin:'0px 0px -6% 0px'}); observer.observe(host);
@@ -230,7 +235,7 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
     setTheme(isDark) {
       dark=isDark;
       headMaterial.color.set(isDark ? 0x00d9f5 : 0x0755c9);
-      restingColor.set(isDark ? 0xffffff : 0xe3e7e8);
+      restingColor.set(isDark ? 0x008da8 : 0x336fa7);
       litColor.set(isDark ? 0x00d9f5 : 0x0755c9);
       uniforms.tint.value.set(isDark ? 0 : .02745,isDark ? .83 : .33333,isDark ? 1 : .78824);
       material.blending=isDark ? THREE.AdditiveBlending : THREE.NormalBlending;

@@ -218,3 +218,5 @@
   .immersive-home .home-intro .home-hero { padding-block:32px }
   .home-intro .hero-art { height:clamp(480px,23vw,620px) }
 }
+
+.journey-node-button[hidden] { display:none }
