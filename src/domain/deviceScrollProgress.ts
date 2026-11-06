@@ -11,7 +11,7 @@ export function deviceScrollMotion(progress: number, quick = false): { arrival: 
     const t = Math.max(0, Math.min(1, value));
     return t * t * (3 - 2 * t);
   };
-  const entryEnd = quick ? .2 : .36;
+  const entryEnd = quick ? .28 : .4;
   const exitStart = quick ? .9 : .8;
   return { arrival: 1 - smooth(progress / entryEnd), departure: smooth((progress - exitStart) / (1 - exitStart)) };
 }

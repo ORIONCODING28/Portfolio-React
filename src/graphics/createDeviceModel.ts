@@ -174,15 +174,18 @@ export function createDeviceModel(host: HTMLElement, kind: DeviceKind, dark: boo
     if (touchInteraction) {
       root.rotation.set(kind === 'backend' ? .06 : 0, baseAngle, 0);
       root.position.set(0, baseY, 0);
+      root.scale.setScalar(1);
       return;
     }
     const bounds = host.getBoundingClientRect();
     const { arrival, departure } = deviceScrollMotion(deviceScrollProgress(bounds.top, bounds.height, window.innerHeight), compactMotion.matches);
-    const entryYaw = kind === 'web' ? .55 : kind === 'mobile' ? -.5 : .28;
+    const entryYaw = kind === 'web' ? 1.35 : kind === 'mobile' ? -1.5 : .95;
     const exitYaw = kind === 'mobile' ? .1 : -.08;
     root.rotation.y = arrival * entryYaw + departure * exitYaw;
-    root.rotation.x = readingPitch + arrival * .055 + departure * .02;
-    root.position.set(0, baseY - arrival * .1, 0);
+    root.rotation.x = readingPitch + arrival * .18 + departure * .02;
+    root.rotation.z = arrival * (kind === 'mobile' ? -.12 : .07);
+    root.scale.setScalar(1 - arrival * .22);
+    root.position.set(arrival * (kind === 'web' ? -.22 : .16), baseY - arrival * .32, 0);
   }
   function startInteraction() { interacted = true; sync(); }
   function setInteractionEnabled(enabled: boolean) {
@@ -242,6 +245,7 @@ export function createDeviceModel(host: HTMLElement, kind: DeviceKind, dark: boo
     camera.aspect = host.clientWidth / host.clientHeight;
     // Include the laptop's depth and perspective: fitting only its unrotated
     // width cuts off the front corners of its keyboard on narrow viewports.
+    root.scale.setScalar(1);
     root.position.set(0, kind === 'web' ? -.04 : 0, 0);
     root.rotation.set(touchInteraction ? (kind === 'backend' ? .06 : 0) : readingPitch, touchInteraction ? baseAngle : 0, 0);
     root.updateMatrixWorld(true);

@@ -33,7 +33,7 @@ test('entry eases into the reading pose and exit remains independent and reversi
   assert.deepEqual(deviceScrollMotion(1), { arrival: 0, departure: 1 });
   assert.ok(deviceScrollMotion(.1).arrival > deviceScrollMotion(.25).arrival);
   assert.ok(deviceScrollMotion(.9).departure > deviceScrollMotion(.85).departure);
-  assert.ok(deviceScrollMotion(.36 - .0001).arrival < .000001);
+  assert.ok(deviceScrollMotion(.4 - .0001).arrival < .000001);
   assert.ok(deviceScrollMotion(.8 + .0001).departure < .000001);
 });
 
@@ -41,9 +41,9 @@ test('quick motion remains animated but reaches the reading pose with less scrol
   assert.deepEqual(deviceScrollMotion(0, true), { arrival: 1, departure: 0 });
   assert.ok(deviceScrollMotion(.1, true).arrival > 0);
   assert.ok(deviceScrollMotion(.1, true).arrival < deviceScrollMotion(.1).arrival);
-  assert.equal(deviceScrollMotion(.2, true).arrival, 0);
-  assert.ok(deviceScrollMotion(.2).arrival > 0);
-  for (const progress of [.2, .4, .6, .8, .9]) {
+  assert.equal(deviceScrollMotion(.28, true).arrival, 0);
+  assert.ok(deviceScrollMotion(.28).arrival > 0);
+  for (const progress of [.28, .4, .6, .8, .9]) {
     assert.deepEqual(deviceScrollMotion(progress, true), { arrival: 0, departure: 0 });
   }
   assert.ok(deviceScrollMotion(.95, true).departure > 0);

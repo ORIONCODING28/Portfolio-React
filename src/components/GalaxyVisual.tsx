@@ -23,6 +23,6 @@ export function GalaxyVisual() {
   useEffect(() => { darkRef.current = isDark; controller.current?.setTheme(isDark); }, [isDark]);
   return <div className="galaxy-visual">
     <div className="galaxy-canvas" ref={host} aria-hidden="true" />
-    <span className="sr-only">Web &amp; Mobile Developer</span>
+    <span className="sr-only">Web &amp; App Developer</span>
   </div>;
 }

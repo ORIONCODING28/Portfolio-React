@@ -1,3 +1,4 @@
+import { heroOpeningScale } from '../domain/heroScroll';
 import { bindSceneRecovery } from './bindSceneRecovery';
 import * as THREE from 'three';
 import { fitGalaxyCamera, getGalaxyPointScale } from './fitGalaxyCamera';
@@ -68,7 +69,11 @@ class AngularGalaxy implements GalaxyController {
     if (this.host.closest('.home-hero')) {
       fitGalaxyCamera(this.camera, [this.coreSphere, ...this.orbitRings.children.filter((object): object is ParticleScene => object instanceof THREE.Points)]);
     }
-    const pixelRatio = Math.min(window.devicePixelRatio, this.compactMedia.matches ? 1.5 : 2);
+    const intro = this.host.closest('.home-intro');
+    const headerHeight = document.querySelector('.site-header')?.getBoundingClientRect().height ?? 80;
+    const openingScale = intro ? heroOpeningScale(this.host.clientWidth, this.host.clientHeight, document.documentElement.clientWidth, window.innerHeight - headerHeight) : 1;
+    // Allocate the enlarged presentation once per resize, not on every scroll frame.
+    const pixelRatio = Math.min(window.devicePixelRatio * Math.min(openingScale, 2), intro ? 2.5 : this.compactMedia.matches ? 1.5 : 2);
     this.renderer.setPixelRatio(pixelRatio);
     this.particleProjection.value = getGalaxyPointScale(this.camera, this.host.clientHeight, pixelRatio);
     this.renderer.setSize(this.host.clientWidth, this.host.clientHeight, false);
@@ -246,8 +251,8 @@ class AngularGalaxy implements GalaxyController {
     this.mainGroup.add(this.orbitRings);
 
     const centerTextSize = isMobile ? 49 : 66;
-    this.centerText = this.createTextSprite('WEB & MOBILE\nDEVELOPER', centerTextSize, this.currentTextColor);
-    this.centerText.position.set(0, .65, 0);
+    this.centerText = this.createTextSprite('WEB & APP\nDEVELOPER', centerTextSize, this.currentTextColor);
+    this.centerText.position.set(0, 0, 0);
     this.mainGroup.add(this.centerText);
 
     const techTextSize = isMobile ? 32 : 40;
@@ -524,7 +529,7 @@ class AngularGalaxy implements GalaxyController {
     if (this.centerText) {
       const size = this.host.clientWidth < 768 ? 49 : 66;
       this.centerText.material.map?.dispose();
-      this.centerText.material.map = this.textTexture('WEB & MOBILE\nDEVELOPER', size, this.currentTextColor);
+      this.centerText.material.map = this.textTexture('WEB & APP\nDEVELOPER', size, this.currentTextColor);
       this.centerText.material.needsUpdate = true;
     }
 

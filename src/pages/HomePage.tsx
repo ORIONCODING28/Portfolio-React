@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { useHeroScroll } from '../hooks/useHeroScroll';
 import { useHomeMotion } from '../hooks/useHomeMotion';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Terminal } from 'lucide-react';
@@ -49,10 +50,11 @@ export function HomePage() {
   };
   const motionScope = useRef<HTMLDivElement>(null);
   useHomeMotion(motionScope);
+  useHeroScroll(motionScope);
   const { copy, isEnglish } = usePortfolio();
   const text = content[isEnglish ? 'en' : 'it'];
   return <div className="immersive-home" ref={motionScope}>
-    <div className="home-constellation"><section className="home-hero page-container" aria-labelledby="home-title">
+    <div className="home-constellation home-intro"><section className="home-hero page-container" aria-labelledby="home-title">
       <div className="hero-copy">
         <h1 id="home-title"><span>{text.heroTitle[0]} </span><span>{text.heroTitle[1]}</span></h1>
         <p className="hero-intro">{text.intro}</p>
@@ -60,6 +62,7 @@ export function HomePage() {
         <button className="terminal-link text-link" type="button" aria-haspopup="dialog" aria-controls="portfolio-terminal" onClick={() => setTerminalOpen(true)}><Terminal size={20} aria-hidden="true" />{copy.terminal}</button>
       </div>
       <div className="hero-art"><GalaxyVisual /></div>
+      <span className="hero-scroll-hint" aria-hidden="true">{isEnglish ? 'Scroll to explore' : 'Scorri per esplorare'}<span /></span>
     </section></div>
 
     <section className="home-capabilities page-container" aria-labelledby="capabilities-title">

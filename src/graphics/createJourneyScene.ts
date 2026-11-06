@@ -59,7 +59,7 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
         // GLSL pow is undefined for a negative base, even with exponent 2.
         float normalizedDistance=distance/.085;
         float wave=exp(-normalizedDistance*normalizedDistance);
-        intensity=brightness*(.28+wave*1.25*trail);
+        intensity=brightness*(trail>.5 ? .32+wave*2.4 : .2);
         gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);
         gl_PointSize=max(1.,size*projection);
       }`,
@@ -69,6 +69,26 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
   });
   geometries.push(geometry); materials.push(material);
   const flow=new THREE.Points(geometry,material); flow.frustumCulled=false; scene.add(flow);
+  // The connecting filament and moving head describe the route between milestones.
+  // Background dust stays fixed and never receives the travelling highlight.
+  const bridgeGeometry=new THREE.BufferGeometry().setFromPoints(curve.getSpacedPoints(180));
+  const bridgeMaterial=new THREE.LineBasicMaterial({color:dark ? 0x00d9f5 : 0x0755c9,transparent:true,opacity:.2,depthWrite:false});
+  const tailMaterial=new THREE.LineBasicMaterial({color:dark ? 0x00d9f5 : 0x0755c9,transparent:true,opacity:.95,depthWrite:false});
+  const tailGeometry=bridgeGeometry.clone();
+  geometries.push(bridgeGeometry,tailGeometry); materials.push(bridgeMaterial,tailMaterial);
+  scene.add(new THREE.Line(bridgeGeometry,bridgeMaterial),new THREE.Line(tailGeometry,tailMaterial));
+  const headCanvas=document.createElement('canvas'); headCanvas.width=64; headCanvas.height=64;
+  const headContext=headCanvas.getContext('2d');
+  if(!headContext){renderer.dispose();renderer.domElement.remove();throw new Error('Canvas unavailable');}
+  const headGradient=headContext.createRadialGradient(32,32,0,32,32,30);
+  headGradient.addColorStop(0,'rgba(255,255,255,1)');
+  headGradient.addColorStop(.22,'rgba(255,255,255,1)');
+  headGradient.addColorStop(1,'rgba(255,255,255,0)');
+  headContext.fillStyle=headGradient; headContext.fillRect(0,0,64,64);
+  const headTexture=new THREE.CanvasTexture(headCanvas); textures.push(headTexture);
+  const headMaterial=new THREE.SpriteMaterial({map:headTexture,color:dark ? 0x00d9f5 : 0x0755c9,transparent:true,depthWrite:false});
+  materials.push(headMaterial);
+  const head=new THREE.Sprite(headMaterial); head.scale.setScalar(.26); scene.add(head);
   const starCanvas=document.createElement('canvas'); starCanvas.width=128; starCanvas.height=128;
   const context=starCanvas.getContext('2d');
   if(!context){renderer.dispose();renderer.domElement.remove();throw new Error('Canvas unavailable');}
@@ -101,6 +121,11 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
   const updateSequence=()=>{
     const progress=journeyProgress(elapsed,nodePhases);
     uniforms.progress.value=progress;
+    const headProgress=Math.min(1,progress);
+    head.position.copy(curve.getPointAt(headProgress));
+    headMaterial.opacity=progress<=1 ? 1 : Math.max(0,1-(progress-1)/.08);
+    const segment=Math.round(headProgress*180);
+    tailGeometry.setDrawRange(Math.max(0,segment-14),Math.min(15,segment+1));
     const activeIndex=journeyActiveStage(progress,nodePhases);
     const illumination=Math.exp(-Math.pow((nodePhases[activeIndex]-progress)/.065,2));
     const illuminated=illumination>.12;
@@ -150,6 +175,7 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
     const next=entries[0].isIntersecting && entries[0].intersectionRatio>=.4;
     if(next===visible)return;
     visible=next;
+    if(!visible)elapsed=0;
     if(visible)updateSequence(); else onStage(null);
     sync();
   },{threshold:[0,.4],rootMargin:'0px 0px -6% 0px'}); observer.observe(host);
@@ -162,6 +188,9 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
     },
     setTheme(isDark) {
       dark=isDark;
+      bridgeMaterial.color.set(isDark ? 0x00d9f5 : 0x0755c9);
+      tailMaterial.color.copy(bridgeMaterial.color);
+      headMaterial.color.copy(bridgeMaterial.color);
       restingColor.set(isDark ? 0xffffff : 0xe3e7e8);
       litColor.set(isDark ? 0x00d9f5 : 0x0755c9);
       uniforms.tint.value.set(isDark ? 0 : .02745,isDark ? .83 : .33333,isDark ? 1 : .78824);

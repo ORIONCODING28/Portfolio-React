@@ -194,3 +194,16 @@
 .home-constellation { position:relative; isolation:isolate }
 .home-constellation::before { content:""; position:absolute; inset:0; z-index:-1; pointer-events:none; background-image:url('/assets/home/section-constellation.svg'); background-size:1200px 720px; opacity:.8 }
 :root:not(.dark) .home-constellation::before { background-image:none; background-color:var(--accent-art); mask-image:url('/assets/home/section-constellation.svg'); mask-size:1200px 720px; opacity:.9 }
+
+
+.home-intro { overflow-x:clip }
+
+/* Local scroll study: the resting grid remains the approved home composition. */
+.home-intro[data-intro-ready] .home-hero { position:sticky; top:var(--intro-top); z-index:2 }
+.home-intro .hero-art { transform-origin:center; position:relative; z-index:2; pointer-events:none }
+.home-intro .hero-copy { z-index:3 }
+.hero-scroll-hint { display:none; pointer-events:none }
+.home-intro[data-intro-ready] .hero-scroll-hint { display:flex; position:absolute; z-index:4; left:50%; top:calc(var(--intro-viewport) - 58px); transform:translateX(-50%); align-items:center; gap:12px; color:var(--muted); font-size:.8rem; white-space:nowrap }
+.hero-scroll-hint span { display:block; width:1px; height:24px; background:var(--accent) }
+.home-intro[data-intro-state="moving"] .hero-art { will-change:transform }
+.home-intro[data-intro-state="settled"] .hero-scroll-hint { visibility:hidden }

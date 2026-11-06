@@ -1,17 +1,24 @@
 import { useEffect, type RefObject } from 'react';
 
-/** One-time section entrances. Content stays visible without enhancement. */
+/** Replay short section entrances after leaving the viewport. Content stays visible by default. */
 export function useHomeMotion(scope: RefObject<HTMLDivElement | null>) {
   useEffect(() => {
     const root = scope.current;
     if (!root || !('IntersectionObserver' in window)) return;
     const compact = matchMedia('(max-width: 1023px), (pointer: coarse)');
     const active = new Map<Element, Animation>();
+    const inView = new Set<Element>();
     const finish = () => { active.forEach(animation => animation.finish()); active.clear(); };
     const observer = new IntersectionObserver(entries => {
       for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        observer.unobserve(entry.target);
+        if (!entry.isIntersecting || entry.intersectionRatio < (compact.matches ? .01 : .12)) {
+          inView.delete(entry.target);
+          active.get(entry.target)?.cancel();
+          active.delete(entry.target);
+          continue;
+        }
+        if (inView.has(entry.target)) continue;
+        inView.add(entry.target);
         if (document.hidden) continue;
         const element = entry.target as HTMLElement;
         const sideways = element.dataset.homeReveal === 'path';
