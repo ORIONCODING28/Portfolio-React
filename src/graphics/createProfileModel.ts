@@ -14,11 +14,10 @@ export interface ProfileModelController extends DeviceController { setStage(inde
 export function createProfileModel(initialHost: HTMLElement, initialStage: number, initialDark: boolean, onReady: () => void, onError: () => void, onLoading: () => void): ProfileModelController {
   let host = initialHost, dark = initialDark, disposed = false, visible = false, expanded = false, requested = 0, frame = 0, previous = 0, elapsed = 0, interacted = false, current: T.Group | null = null, entrance = 0, currentStage = initialStage;
   let preload: ReturnType<typeof setTimeout> | undefined;
-  const coarse = matchMedia('(pointer: coarse)');
   const scene = new T.Scene(), background = new T.Scene(), camera = new T.PerspectiveCamera(32, 1, .1, 80);
   const renderer = new T.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'low-power' });
   renderer.setClearColor(0, 0); renderer.toneMapping = T.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.1; renderer.autoClear = false;
-  renderer.domElement.tabIndex = 0; renderer.domElement.setAttribute('role', 'img');
+  renderer.domElement.tabIndex = -1; renderer.domElement.setAttribute('role', 'img');
   host.append(renderer.domElement);
   const environmentGenerator = new T.PMREMGenerator(renderer), room = new RoomEnvironment();
   const environment = environmentGenerator.fromScene(room, .04); scene.environment = environment.texture; scene.environmentIntensity = .4; room.dispose(); environmentGenerator.dispose();
@@ -119,7 +118,7 @@ export function createProfileModel(initialHost: HTMLElement, initialStage: numbe
   function tick(now: number) {
     frame = 0; if (disposed || !visible || document.hidden || renderer.getContext().isContextLost()) return;
     if (now - previous > 32) { const dt = Math.min((now - previous) / 1000, .05); previous = now; elapsed += dt;
-      if (current) { entrance = Math.min(1, entrance + dt / .55); const remainder = (1 - entrance) ** 3; root.position.y = -remainder * .12 + (!interacted ? Math.sin(elapsed * .7) * .025 : 0); root.rotation.y = remainder * .16; }
+      if (current) { entrance = Math.min(1, entrance + dt / .8); const remainder = (1 - entrance) ** 3; root.position.y = -remainder * .12 + (!interacted ? Math.sin(elapsed * .7) * .025 : 0); root.rotation.y = remainder * .65; }
       render();
     }
     if (!interacted) frame = requestAnimationFrame(tick);
@@ -128,9 +127,20 @@ export function createProfileModel(initialHost: HTMLElement, initialStage: numbe
   function interaction() { interacted = true; root.rotation.y = 0; root.position.y = 0; cancelAnimationFrame(frame); frame = 0; }
   controls.addEventListener('start', interaction); controls.addEventListener('change', render);
   function resetView() { camera.position.copy(home); controls.target.set(0, 0, 0); controls.update(); render(); }
-  function setTouchInteraction(enabled: boolean) { expanded = enabled; controls.enabled = (!coarse.matches && innerWidth >= 1024) || enabled; renderer.domElement.style.touchAction = controls.enabled ? 'none' : 'pan-y'; }
-  function pointerChange() { setTouchInteraction(expanded); }
+  function setInteractionEnabled(enabled: boolean) {
+    const changed = expanded !== enabled;
+    expanded = enabled;
+    controls.enabled = enabled;
+    renderer.domElement.tabIndex = enabled ? 0 : -1;
+    renderer.domElement.style.touchAction = enabled ? 'none' : 'pan-y';
+    if (!changed) return;
+    entrance = 1;
+    if (enabled) interaction();
+    else { interacted = false; resetView(); sync(); }
+  }
+  function pointerChange() { setInteractionEnabled(expanded); }
   function keydown(event: KeyboardEvent) {
+    if (!controls.enabled) return;
     if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '+', '=', '-', 'Home'].includes(event.key)) return;
     event.preventDefault(); event.stopPropagation(); interaction(); if (event.key === 'Home') { resetView(); return; }
     const position = new T.Spherical().setFromVector3(camera.position.clone());
@@ -148,14 +158,14 @@ export function createProfileModel(initialHost: HTMLElement, initialStage: numbe
     distance = nextDistance; controls.minDistance = distance * .5; controls.maxDistance = distance * 2; camera.updateProjectionMatrix(); controls.update();
     renderer.setPixelRatio(Math.min(devicePixelRatio || 1, expanded ? 2 : 1.5)); renderer.setSize(host.clientWidth, host.clientHeight, false); pointerChange(); sync();
   }
-  const sizeObserver = new ResizeObserver(resize), observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); }); sizeObserver.observe(host); observer.observe(host);
+  const sizeObserver = new ResizeObserver(resize), observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting && entry.intersectionRatio >= .12; sync(); }, { threshold: [0, .12] }); sizeObserver.observe(host); observer.observe(host);
   function setTheme(value: boolean) { dark = value; accent.color.set(value ? 0x00b9d1 : 0x0755c9); rim.color.set(value ? 0x00d9f5 : 0xffffff); rim.intensity = value ? .8 : .45; glow.material.uniforms.dark.value = value ? 1 : 0; renderer.toneMappingExposure = value ? 1.1 : 1.0; render(); }
   function attachTo(target: HTMLElement) { if (disposed) return; sizeObserver.unobserve(host); observer.unobserve(host); host = target; host.append(renderer.domElement); sizeObserver.observe(host); observer.observe(host); resize(); }
   const unbindRecovery = bindSceneRecovery(renderer.domElement, sync);
-  document.addEventListener('visibilitychange', sync); coarse.addEventListener('change', pointerChange); resize(); setTheme(dark); void setStage(initialStage);
-  return { setStage: index => { void setStage(index); }, setTheme, attachTo, resetView, setTouchInteraction, dispose() {
+  document.addEventListener('visibilitychange', sync); resize(); setTheme(dark); void setStage(initialStage);
+  return { setStage: index => { void setStage(index); }, setTheme, attachTo, resetView, setInteractionEnabled, dispose() {
     disposed = true; ++requested; clearTimeout(preload); cancelAnimationFrame(frame); sizeObserver.disconnect(); observer.disconnect();
-    document.removeEventListener('visibilitychange', sync); unbindRecovery(); coarse.removeEventListener('change', pointerChange); renderer.domElement.removeEventListener('keydown', keydown);
+    document.removeEventListener('visibilitychange', sync); unbindRecovery(); renderer.domElement.removeEventListener('keydown', keydown);
     controls.removeEventListener('start', interaction); controls.removeEventListener('change', render); controls.dispose(); resources.forEach(release); resources.clear(); cache.clear(); accent.dispose(); glow.geometry.dispose(); glow.material.dispose(); environment.dispose(); scene.clear(); background.clear(); renderer.dispose(); renderer.forceContextLoss(); renderer.domElement.remove();
   } };
 }

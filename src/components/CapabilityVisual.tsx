@@ -46,11 +46,11 @@ export function CapabilityVisual({ kind }: { kind: DeviceKind }) {
     document.body.style.overflow = 'hidden';
     modal.showModal();
     controller.attachTo(target);
-    controller.setTouchInteraction(true);
+    controller.setInteractionEnabled(true);
     closeButton.current?.focus({ preventScroll: true });
     return () => {
       controller.attachTo(inline);
-      controller.setTouchInteraction(false);
+      controller.setInteractionEnabled(false);
       modal.close();
       document.body.style.overflow = originalOverflow;
       window.scrollTo({ left: originalScroll.x, top: originalScroll.y, behavior: 'instant' });
@@ -66,7 +66,7 @@ export function CapabilityVisual({ kind }: { kind: DeviceKind }) {
       <div className="device-dialog-layout">
         <header className="device-dialog-header"><h2 id={`device-title-${kind}`}>{label}</h2><button ref={closeButton} className="device-dialog-close" type="button" onClick={() => setExpanded(false)} aria-label={isEnglish ? 'Close 3D view' : 'Chiudi vista 3D'}><X size={23} aria-hidden="true" /></button></header>
         <div className="device-dialog-host" ref={dialogHost} />
-        <p id={`device-help-${kind}`} className="device-dialog-help">{isEnglish ? 'Drag to rotate · Pinch to zoom' : 'Trascina per ruotare · Pizzica per ingrandire'}</p>
+        <p id={`device-help-${kind}`} className="device-dialog-help">{isEnglish ? 'Drag to rotate · Scroll or pinch to zoom' : 'Trascina per ruotare · Rotella o pizzica per ingrandire'}</p>
       </div>
     </dialog>
   </div>;

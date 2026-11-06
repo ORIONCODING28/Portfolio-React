@@ -9,7 +9,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { createStudioBackdrop } from './createStudioBackdrop';
 import { createDeviceScreen } from './createDeviceScreen';
 export type DeviceKind = 'web' | 'mobile' | 'backend';
-export interface DeviceController { attachTo(target: HTMLElement): void; setTheme(dark: boolean): void; resetView(): void; setTouchInteraction(enabled: boolean): void; dispose(): void }
+export interface DeviceController { attachTo(target: HTMLElement): void; setTheme(dark: boolean): void; resetView(): void; setInteractionEnabled(enabled: boolean): void; dispose(): void }
 
 export function createDeviceModel(host: HTMLElement, kind: DeviceKind, dark: boolean, onLoaded?: () => void, onError?: () => void): DeviceController {
   const scene = new THREE.Scene();
@@ -25,9 +25,8 @@ export function createDeviceModel(host: HTMLElement, kind: DeviceKind, dark: boo
   const screens: ReturnType<typeof createDeviceScreen>[] = [];
   let disposed = false, visible = false, frame = 0, previous = 0, elapsed = 0;
   let modelReady = false;
-  const entranceDuration = matchMedia('(max-width: 760px), (pointer: coarse)').matches ? .42 : .74;
+  const entranceDuration = matchMedia('(max-width: 760px), (pointer: coarse)').matches ? .66 : .82;
   let entranceTime = kind === 'web' ? 0 : kind === 'mobile' ? -.08 : -.16;
-  const coarse = matchMedia('(pointer: coarse)');
   const root = new THREE.Group(); scene.add(root);
   const baseAngle = kind === 'web' ? -.34 : kind === 'mobile' ? -.16 : -.4;
   root.rotation.y = baseAngle;
@@ -157,7 +156,7 @@ export function createDeviceModel(host: HTMLElement, kind: DeviceKind, dark: boo
   controls.maxPolarAngle = Math.PI - .12;
   let interacted = false, touchInteraction = false, fitDistance = 0;
   const homePosition = new THREE.Vector3();
-  renderer.domElement.tabIndex = 0;
+  renderer.domElement.tabIndex = -1;
   renderer.domElement.setAttribute('role', 'img');
   renderer.domElement.setAttribute('aria-label', kind === 'web' ? 'Laptop 3D' : kind === 'mobile' ? 'iPhone 15 Pro 3D' : 'Server 3D');
   renderer.domElement.setAttribute('aria-describedby', 'device-interaction-help');
@@ -173,21 +172,33 @@ export function createDeviceModel(host: HTMLElement, kind: DeviceKind, dark: boo
     else if (visible && modelReady) entranceTime = Math.min(entranceDuration, entranceTime + dt);
     const progress = THREE.MathUtils.clamp(entranceTime / entranceDuration, 0, 1);
     const remaining = Math.pow(1 - progress, 4);
-    const compact = entranceDuration < .5;
+    const compact = entranceDuration < .7;
     elapsed += dt;
     // Entrance affects the device group only. Studio lighting and orbit camera
     // keep their existing coordinates throughout the presentation.
-    root.rotation.y = baseAngle + remaining * (compact ? .08 : .2);
+    root.rotation.y = baseAngle + remaining * (compact ? .5 : .7);
     root.rotation.x = (kind === 'backend' ? .06 : 0) - remaining * (compact ? .025 : .06);
     root.position.x = remaining * (compact ? 0 : kind === 'web' ? -.12 : kind === 'backend' ? .12 : 0);
-    root.position.y = (kind === 'web' ? -.04 : 0) - remaining * (compact ? .08 : .2)
+    root.position.y = (kind === 'web' ? -.04 : 0) - remaining * (compact ? .5 : .7)
       + (!interacted && progress === 1 ? Math.sin(elapsed * .7) * .025 : 0);
   }
   function startInteraction() { interacted = true; entranceTime = entranceDuration; sync(); }
-  function setTouchInteraction(enabled: boolean) {
+  function setInteractionEnabled(enabled: boolean) {
+    const changed = touchInteraction !== enabled;
     touchInteraction = enabled;
-    controls.enabled = !coarse.matches || enabled;
+    controls.enabled = enabled;
+    renderer.domElement.tabIndex = enabled ? 0 : -1;
     renderer.domElement.style.touchAction = enabled ? 'none' : 'pan-y';
+    if (!changed) return;
+    // The inline model presents itself; only the modal owns orbit/zoom input.
+    interacted = enabled;
+    entranceTime = entranceDuration;
+    if (!enabled) {
+      camera.position.copy(homePosition);
+      controls.target.set(0, 0, 0);
+      controls.update();
+    }
+    sync();
   }
   function resetView() {
     interacted = false;
@@ -196,6 +207,7 @@ export function createDeviceModel(host: HTMLElement, kind: DeviceKind, dark: boo
     controls.update(); sync();
   }
   function keydown(event: KeyboardEvent) {
+    if (!controls.enabled) return;
     if (!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','+','=','-','Home'].includes(event.key)) return;
     event.preventDefault(); startInteraction();
     if (event.key === 'Home') { resetView(); return; }
@@ -211,11 +223,10 @@ export function createDeviceModel(host: HTMLElement, kind: DeviceKind, dark: boo
     camera.position.setFromSpherical(spherical).add(controls.target);
     controls.update(); render();
   }
-  function pointerModeChanged() { setTouchInteraction(touchInteraction); sync(); }
   controls.addEventListener('start', startInteraction);
   controls.addEventListener('change', render);
   renderer.domElement.addEventListener('keydown', keydown);
-  setTouchInteraction(false);
+  setInteractionEnabled(false);
   function needsAnimation(): boolean {
     return !disposed && visible && modelReady && !document.hidden && !renderer.getContext().isContextLost()
       && (!interacted || entranceTime < entranceDuration);
@@ -300,15 +311,15 @@ export function createDeviceModel(host: HTMLElement, kind: DeviceKind, dark: boo
     resize();
   }
   const resizeObserver = new ResizeObserver(resize); resizeObserver.observe(host);
-  const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); }, { rootMargin: '30px' }); observer.observe(host);
-  document.addEventListener('visibilitychange', sync); coarse.addEventListener('change', pointerModeChanged);
+  const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting && entry.intersectionRatio >= .12; sync(); }, { threshold: [0, .12] }); observer.observe(host);
+  document.addEventListener('visibilitychange', sync);
   const unbindRecovery = bindSceneRecovery(renderer.domElement, sync);
   resize(); setTheme(dark); if (kind === 'backend') onLoaded?.();
-  return { attachTo, setTheme, resetView, setTouchInteraction, dispose() {
+  return { attachTo, setTheme, resetView, setInteractionEnabled, dispose() {
     disposed = true; cancelAnimationFrame(frame); resizeObserver.disconnect(); observer.disconnect();
     controls.removeEventListener('start', startInteraction); controls.removeEventListener('change', render);
     renderer.domElement.removeEventListener('keydown', keydown); controls.dispose();
-    document.removeEventListener('visibilitychange', sync); unbindRecovery(); coarse.removeEventListener('change', pointerModeChanged);
+    document.removeEventListener('visibilitychange', sync); unbindRecovery();
     screens.forEach(screen => screen.dispose());
     geometries.forEach(geometry => geometry.dispose()); materials.forEach(mat => mat.dispose()); textures.forEach(texture => { texture.dispose(); if(typeof ImageBitmap !== 'undefined' && texture.image instanceof ImageBitmap) texture.image.close(); });
     environmentTarget.dispose(); scene.clear(); backdrop.clear(); renderer.dispose(); renderer.forceContextLoss(); renderer.domElement.remove();

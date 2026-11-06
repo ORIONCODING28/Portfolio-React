@@ -99,9 +99,8 @@
   .capability-visual { min-height:275px }
 }
 
-.device-open { display:none; position:absolute; inset:0; width:100%; height:100%; min-height:44px; min-width:44px; border:0; background:transparent; cursor:zoom-in; touch-action:pan-y; border-radius:12px }
+.device-open { display:block; position:absolute; inset:0; width:100%; height:100%; min-height:44px; min-width:44px; border:0; background:transparent; cursor:zoom-in; touch-action:pan-y; border-radius:12px }
 .device-open:focus-visible { outline:3px solid var(--accent); outline-offset:-3px }
-.device-help-touch { display:none }
 .device-dialog { position:fixed; inset:0; width:100vw; max-width:none; height:100dvh; max-height:none; margin:0; padding:0; border:0; background:var(--bg); color:var(--text); overflow:hidden }
 .device-dialog::backdrop { background:rgba(0,0,0,.85) }
 .device-dialog-layout { height:100%; display:flex; flex-direction:column; padding:max(16px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left)) }
@@ -112,12 +111,7 @@
 .device-dialog-host canvas { display:block; width:100%; height:100%; cursor:grab }
 .device-dialog-host canvas:active { cursor:grabbing }
 .device-dialog-host canvas:focus-visible { outline:3px solid var(--accent); outline-offset:-3px }
-.device-dialog-help { text-align:center; color:var(--muted); font-size:.85rem; line-height:1.6; padding-top:12px; flex-shrink:0 }
-@media(max-width:1023px),(pointer:coarse) {
-  .device-open { display:block }
-  .device-help-desktop { display:none }
-  .device-help-touch { display:inline }
-}
+.device-dialog .device-dialog-help { width:100%; max-width:none; text-align:center; color:var(--muted); font-size:.85rem; line-height:1.6; padding-top:12px; flex-shrink:0 }
 
 /* Keep the desktop composition on laptops and tablets, with proportionate type. */
 @media(min-width:640px) and (max-width:1023px) {

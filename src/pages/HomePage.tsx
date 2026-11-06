@@ -66,7 +66,7 @@ export function HomePage() {
       <div data-home-reveal="heading">
       <h2 id="capabilities-title">{text.title}</h2>
       <p className="home-section-intro">{text.subtitle}</p>
-      <p id="device-interaction-help" className="device-interaction-help"><span className="device-help-desktop">{isEnglish ? 'Drag to explore' : 'Trascina per esplorare'}</span><span className="device-help-touch">{isEnglish ? 'Tap a model to explore it' : 'Tocca il modello per esplorarlo'}</span><span className="sr-only">{isEnglish ? 'Keyboard: arrow keys to rotate, + and - to zoom, Home to reset.' : 'Tastiera: frecce per ruotare, + e - per ingrandire, Home per ripristinare.'}</span></p>
+      <p id="device-interaction-help" className="device-interaction-help">{isEnglish ? 'Select a model to explore it in 3D' : 'Seleziona un modello per esplorarlo in 3D'}<span className="sr-only">{isEnglish ? 'Keyboard: arrow keys to rotate, + and - to zoom, Home to reset.' : 'Tastiera: frecce per ruotare, + e - per ingrandire, Home per ripristinare.'}</span></p>
       </div>
       <div className="home-capability-stage">
         <div className="home-capability-copy">
