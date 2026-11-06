@@ -1,3 +1,4 @@
+import { deviceScrollProgress } from '../domain/deviceScrollProgress';
 import { bindSceneRecovery } from './bindSceneRecovery';
 import { publicAsset } from '../domain/deployment.ts';
 import * as THREE from 'three';
@@ -23,10 +24,8 @@ export function createDeviceModel(host: HTMLElement, kind: DeviceKind, dark: boo
   host.appendChild(renderer.domElement);
   const geometries = new Set<THREE.BufferGeometry>(), materials = new Set<THREE.Material>(), textures = new Set<THREE.Texture>();
   const screens: ReturnType<typeof createDeviceScreen>[] = [];
-  let disposed = false, visible = false, frame = 0, previous = 0, elapsed = 0;
+  let disposed = false, visible = false, frame = 0;
   let modelReady = false;
-  const entranceDuration = matchMedia('(max-width: 760px), (pointer: coarse)').matches ? .66 : .82;
-  let entranceTime = kind === 'web' ? 0 : kind === 'mobile' ? -.08 : -.16;
   const root = new THREE.Group(); scene.add(root);
   const baseAngle = kind === 'web' ? -.34 : kind === 'mobile' ? -.16 : -.4;
   root.rotation.y = baseAngle;
@@ -122,7 +121,7 @@ export function createDeviceModel(host: HTMLElement, kind: DeviceKind, dark: boo
       const scale = kind === 'mobile' ? 2.74/size.y : 3.28/size.x;
       imported.scale.multiplyScalar(scale);
       imported.position.addScaledVector(center,-scale);
-      root.add(imported); modelReady = true; compose(0); resize(); render(); onLoaded?.();
+      root.add(imported); modelReady = true; compose(); resize(); render(); onLoaded?.();
     }, undefined, () => { if(!disposed) onError?.(); });
   } else {
     for (let i = 0; i < 3; i++) {
@@ -167,22 +166,16 @@ export function createDeviceModel(host: HTMLElement, kind: DeviceKind, dark: boo
     renderer.clearDepth();
     renderer.render(scene, camera);
   }
-  function compose(dt: number) {
-    if (interacted) entranceTime = entranceDuration;
-    else if (visible && modelReady) entranceTime = Math.min(entranceDuration, entranceTime + dt);
-    const progress = THREE.MathUtils.clamp(entranceTime / entranceDuration, 0, 1);
-    const remaining = Math.pow(1 - progress, 4);
-    const compact = entranceDuration < .7;
-    elapsed += dt;
-    // Entrance affects the device group only. Studio lighting and orbit camera
-    // keep their existing coordinates throughout the presentation.
-    root.rotation.y = baseAngle + remaining * (compact ? .5 : .7);
-    root.rotation.x = (kind === 'backend' ? .06 : 0) - remaining * (compact ? .025 : .06);
-    root.position.x = remaining * (compact ? 0 : kind === 'web' ? -.12 : kind === 'backend' ? .12 : 0);
-    root.position.y = (kind === 'web' ? -.04 : 0) - remaining * (compact ? .5 : .7)
-      + (!interacted && progress === 1 ? Math.sin(elapsed * .7) * .025 : 0);
+  function compose() {
+    // Native page scrolling supplies the pose; neither wheel nor touch is captured.
+    const bounds = host.getBoundingClientRect();
+    const progress = touchInteraction ? .5 : deviceScrollProgress(bounds.top, bounds.height, window.innerHeight);
+    root.rotation.y = baseAngle + (.5 - progress) * 1.1;
+    root.rotation.x = (kind === 'backend' ? .06 : 0) + (progress - .5) * .08;
+    root.position.x = 0;
+    root.position.y = (kind === 'web' ? -.04 : 0) - (1 - progress) * (touchInteraction ? 0 : .1);
   }
-  function startInteraction() { interacted = true; entranceTime = entranceDuration; sync(); }
+  function startInteraction() { interacted = true; sync(); }
   function setInteractionEnabled(enabled: boolean) {
     const changed = touchInteraction !== enabled;
     touchInteraction = enabled;
@@ -192,7 +185,6 @@ export function createDeviceModel(host: HTMLElement, kind: DeviceKind, dark: boo
     if (!changed) return;
     // The inline model presents itself; only the modal owns orbit/zoom input.
     interacted = enabled;
-    entranceTime = entranceDuration;
     if (!enabled) {
       camera.position.copy(homePosition);
       controls.target.set(0, 0, 0);
@@ -227,18 +219,14 @@ export function createDeviceModel(host: HTMLElement, kind: DeviceKind, dark: boo
   controls.addEventListener('change', render);
   renderer.domElement.addEventListener('keydown', keydown);
   setInteractionEnabled(false);
-  function needsAnimation(): boolean {
-    return !disposed && visible && modelReady && !document.hidden && !renderer.getContext().isContextLost()
-      && (!interacted || entranceTime < entranceDuration);
-  }
-  function animate(now: number) {
-    frame = 0; if (!needsAnimation()) return;
-    if (!previous || now - previous >= 32) { const dt = previous ? Math.min((now - previous) / 1000, .06) : 0; previous = now; compose(dt); render(); }
-    if (needsAnimation()) frame = requestAnimationFrame(animate);
-  }
   function sync() {
-    cancelAnimationFrame(frame); frame = 0; previous = 0; compose(0); render();
-    if (needsAnimation()) frame = requestAnimationFrame(animate);
+    cancelAnimationFrame(frame); frame = 0;
+    if (disposed || !visible || document.hidden || renderer.getContext().isContextLost()) return;
+    compose(); render();
+  }
+  function scroll() {
+    if (frame || touchInteraction || disposed || !visible || !modelReady || document.hidden || renderer.getContext().isContextLost()) return;
+    frame = requestAnimationFrame(() => { frame = 0; compose(); render(); });
   }
   function resize() {
     if (disposed || !host.clientWidth || !host.clientHeight) return;
@@ -313,13 +301,14 @@ export function createDeviceModel(host: HTMLElement, kind: DeviceKind, dark: boo
   const resizeObserver = new ResizeObserver(resize); resizeObserver.observe(host);
   const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting && entry.intersectionRatio >= .12; sync(); }, { threshold: [0, .12] }); observer.observe(host);
   document.addEventListener('visibilitychange', sync);
+  window.addEventListener('scroll', scroll, { passive: true });
   const unbindRecovery = bindSceneRecovery(renderer.domElement, sync);
   resize(); setTheme(dark); if (kind === 'backend') onLoaded?.();
   return { attachTo, setTheme, resetView, setInteractionEnabled, dispose() {
     disposed = true; cancelAnimationFrame(frame); resizeObserver.disconnect(); observer.disconnect();
     controls.removeEventListener('start', startInteraction); controls.removeEventListener('change', render);
     renderer.domElement.removeEventListener('keydown', keydown); controls.dispose();
-    document.removeEventListener('visibilitychange', sync); unbindRecovery();
+    document.removeEventListener('visibilitychange', sync); window.removeEventListener('scroll', scroll); unbindRecovery();
     screens.forEach(screen => screen.dispose());
     geometries.forEach(geometry => geometry.dispose()); materials.forEach(mat => mat.dispose()); textures.forEach(texture => { texture.dispose(); if(typeof ImageBitmap !== 'undefined' && texture.image instanceof ImageBitmap) texture.image.close(); });
     environmentTarget.dispose(); scene.clear(); backdrop.clear(); renderer.dispose(); renderer.forceContextLoss(); renderer.domElement.remove();
