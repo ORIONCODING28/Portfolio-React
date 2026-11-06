@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { deviceScrollProgress } from '../src/domain/deviceScrollProgress.ts';
+import { deviceScrollProgress, deviceScrollMotion } from '../src/domain/deviceScrollProgress.ts';
 
 test('scrolling down advances the pose and scrolling back restores the exact pose', () => {
   const top = deviceScrollProgress(580, 380, 720);
@@ -17,4 +17,22 @@ test('the pose stays bounded outside the viewport and works at phone and wide-sc
     assert.equal(deviceScrollProgress(-height * 2, height, viewport), 1);
   }
   assert.equal(deviceScrollProgress(0, 0, 0), .5);
+});
+
+test('models hold the exact front-facing pose throughout the reading zone at every viewport size', () => {
+  for (const [height, viewport] of [[350, 844], [580, 1440], [380, 720], [440, 1024]]) {
+    const centred = (viewport - height) / 2;
+    for (const offset of [-viewport * .1, 0, viewport * .1]) {
+      assert.deepEqual(deviceScrollMotion(deviceScrollProgress(centred + offset, height, viewport)), { arrival: 0, departure: 0 });
+    }
+  }
+});
+
+test('entry eases into the reading pose and exit remains independent and reversible', () => {
+  assert.deepEqual(deviceScrollMotion(0), { arrival: 1, departure: 0 });
+  assert.deepEqual(deviceScrollMotion(1), { arrival: 0, departure: 1 });
+  assert.ok(deviceScrollMotion(.1).arrival > deviceScrollMotion(.25).arrival);
+  assert.ok(deviceScrollMotion(.9).departure > deviceScrollMotion(.85).departure);
+  assert.ok(deviceScrollMotion(.36 - .0001).arrival < .000001);
+  assert.ok(deviceScrollMotion(.8 + .0001).departure < .000001);
 });

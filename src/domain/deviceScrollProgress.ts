@@ -4,3 +4,12 @@ export function deviceScrollProgress(top: number, height: number, viewportHeight
   const start = viewportHeight * .86;
   return Math.max(0, Math.min(1, (start - top) / (start + height * .65)));
 }
+
+/** Settle into a broad reading zone, with zero velocity at both phase boundaries. */
+export function deviceScrollMotion(progress: number): { arrival: number; departure: number } {
+  const smooth = (value: number) => {
+    const t = Math.max(0, Math.min(1, value));
+    return t * t * (3 - 2 * t);
+  };
+  return { arrival: 1 - smooth(progress / .36), departure: smooth((progress - .8) / .2) };
+}

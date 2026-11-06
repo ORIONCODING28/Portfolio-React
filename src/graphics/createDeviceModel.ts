@@ -1,4 +1,4 @@
-import { deviceScrollProgress } from '../domain/deviceScrollProgress';
+import { deviceScrollProgress, deviceScrollMotion } from '../domain/deviceScrollProgress';
 import { bindSceneRecovery } from './bindSceneRecovery';
 import { publicAsset } from '../domain/deployment.ts';
 import * as THREE from 'three';
@@ -28,6 +28,7 @@ export function createDeviceModel(host: HTMLElement, kind: DeviceKind, dark: boo
   let modelReady = false;
   const root = new THREE.Group(); scene.add(root);
   const baseAngle = kind === 'web' ? -.34 : kind === 'mobile' ? -.16 : -.4;
+  const readingPitch = kind === 'mobile' ? -Math.atan(.13) : kind === 'backend' ? .04 : 0;
   root.rotation.y = baseAngle;
 
   function material<T extends THREE.Material>(value: T): T { materials.add(value); return value; }
@@ -167,13 +168,20 @@ export function createDeviceModel(host: HTMLElement, kind: DeviceKind, dark: boo
     renderer.render(scene, camera);
   }
   function compose() {
-    // Native page scrolling supplies the pose; neither wheel nor touch is captured.
+    // Orbit controls belong to the modal; native scrolling only presents the objects.
+    const baseY = kind === 'web' ? -.04 : 0;
+    if (touchInteraction) {
+      root.rotation.set(kind === 'backend' ? .06 : 0, baseAngle, 0);
+      root.position.set(0, baseY, 0);
+      return;
+    }
     const bounds = host.getBoundingClientRect();
-    const progress = touchInteraction ? .5 : deviceScrollProgress(bounds.top, bounds.height, window.innerHeight);
-    root.rotation.y = baseAngle + (.5 - progress) * 1.1;
-    root.rotation.x = (kind === 'backend' ? .06 : 0) + (progress - .5) * .08;
-    root.position.x = 0;
-    root.position.y = (kind === 'web' ? -.04 : 0) - (1 - progress) * (touchInteraction ? 0 : .1);
+    const { arrival, departure } = deviceScrollMotion(deviceScrollProgress(bounds.top, bounds.height, window.innerHeight));
+    const entryYaw = kind === 'web' ? .55 : kind === 'mobile' ? -.5 : .28;
+    const exitYaw = kind === 'mobile' ? .1 : -.08;
+    root.rotation.y = arrival * entryYaw + departure * exitYaw;
+    root.rotation.x = readingPitch + arrival * .055 + departure * .02;
+    root.position.set(0, baseY - arrival * .1, 0);
   }
   function startInteraction() { interacted = true; sync(); }
   function setInteractionEnabled(enabled: boolean) {
@@ -234,7 +242,7 @@ export function createDeviceModel(host: HTMLElement, kind: DeviceKind, dark: boo
     // Include the laptop's depth and perspective: fitting only its unrotated
     // width cuts off the front corners of its keyboard on narrow viewports.
     root.position.set(0, kind === 'web' ? -.04 : 0, 0);
-    root.rotation.set(kind === 'backend' ? .06 : 0, baseAngle, 0);
+    root.rotation.set(touchInteraction ? (kind === 'backend' ? .06 : 0) : readingPitch, touchInteraction ? baseAngle : 0, 0);
     root.updateMatrixWorld(true);
     const direction = new THREE.Vector3(0, kind === 'web' ? .22 : .13, 1).normalize();
     const up = new THREE.Vector3(0, direction.z, -direction.y);
