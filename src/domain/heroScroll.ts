@@ -1,17 +1,19 @@
 const clamp = (value: number) => Math.max(0, Math.min(1, value));
 const smooth = (value: number) => { const t = clamp(value); return t * t * (3 - 2 * t); };
 
-/** Frame the sphere, allowing its peripheral rings to extend beyond a narrow screen. */
+/** A centred galaxy, not an oversized opening sphere. */
 export function heroOpeningScale(width: number, height: number, viewportWidth: number, availableHeight: number) {
   if (width <= 0 || height <= 0) return 1;
-  // Camera fitting is limited by the rings on narrow canvases, by sphere height on wide ones.
-  const diameter = Math.min(width * .5, height * .88);
-  return Math.max(1, Math.min(2.8, (viewportWidth - 24) / diameter, (availableHeight - 128) / diameter));
+  return Math.max(.65, Math.min(1.3, (viewportWidth - 32) / width, (availableHeight - 100) / height));
 }
 
-/** A position, never a timer: reversing the scroll restores the exact same frame. */
+/** Formation finishes before the assembled galaxy travels into the resting layout. */
 export function heroScrollFrame(scroll: number, start: number, distance: number) {
   const progress = distance > 0 ? clamp((scroll - start) / distance) : 1;
-  const arrival = smooth(progress);
-  return { progress, remaining: 1 - arrival, copy: smooth((progress - .28) / .55) };
+  return {
+    progress,
+    formation: smooth((progress - .05) / .4),
+    remaining: 1 - smooth((progress - .45) / .55),
+    copy: smooth((progress - .62) / .35),
+  };
 }

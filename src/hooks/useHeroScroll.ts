@@ -1,8 +1,9 @@
 import { useLayoutEffect, type RefObject } from 'react';
+import type { GalaxyController } from '../graphics/createGalaxy';
 import { heroOpeningScale, heroScrollFrame } from '../domain/heroScroll';
 
 /** One sticky composition, driven by native page scrolling. No wheel/touch interception. */
-export function useHeroScroll(scope: RefObject<HTMLDivElement | null>) {
+export function useHeroScroll(scope: RefObject<HTMLDivElement | null>, galaxy: RefObject<GalaxyController | null>, formation: RefObject<number>) {
   useLayoutEffect(() => {
     const root = scope.current;
     const track = root?.querySelector<HTMLElement>('.home-intro');
@@ -19,6 +20,8 @@ export function useHeroScroll(scope: RefObject<HTMLDivElement | null>) {
       if (document.hidden) return;
       const value = heroScrollFrame(window.scrollY, start, distance);
       art.style.transform = `translate3d(${x * value.remaining}px,${y * value.remaining}px,0) scale(${1 + (scale - 1) * value.remaining})`;
+      formation.current = value.formation;
+      galaxy.current?.setFormation(value.formation);
       copy.style.opacity = String(value.copy);
       copy.style.transform = `translateY(${16 * (1 - value.copy)}px)`;
       copy.style.pointerEvents = value.copy < .1 ? 'none' : '';
@@ -34,7 +37,7 @@ export function useHeroScroll(scope: RefObject<HTMLDivElement | null>) {
       const viewport = window.innerHeight;
       const width = document.documentElement.clientWidth;
       const available = Math.max(200, viewport - top);
-      distance = Math.min(800, viewport * (width < 640 ? .64 : .78));
+      distance = Math.min(700, viewport * .72);
       track.style.setProperty('--intro-top', `${top}px`);
       track.style.setProperty('--intro-viewport', `${available}px`);
       track.style.height = `${distance + Math.max(available, stage.offsetHeight)}px`;
@@ -76,5 +79,5 @@ export function useHeroScroll(scope: RefObject<HTMLDivElement | null>) {
       track.style.removeProperty('--intro-top'); track.style.removeProperty('--intro-viewport');
       delete track.dataset.introReady; delete track.dataset.introState;
     };
-  }, [scope]);
+  }, [scope, galaxy, formation]);
 }

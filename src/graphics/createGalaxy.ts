@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { fitGalaxyCamera, getGalaxyPointScale } from './fitGalaxyCamera';
 
 export interface GalaxyController {
+  setFormation: (formation: number) => void;
   setPaused: (paused: boolean) => void;
   setTheme: (dark: boolean) => void;
   dispose: () => void;
@@ -25,6 +26,7 @@ class AngularGalaxy implements GalaxyController {
   private readonly compactMedia = matchMedia('(max-width: 1100px), (pointer: coarse)');
   private lastFrameTime: number | null = null;
   private orbitTime = 0;
+  private readonly formation = { value: 1 };
   private readonly particleProjection = { value: 300 };
   private readonly orbitSpeed = Math.PI * 2 / 40; // one complete revolution every 40 seconds
   private animationId: number | null = null;
@@ -88,6 +90,14 @@ class AngularGalaxy implements GalaxyController {
       this.animationId = requestAnimationFrame(this.animate);
     }
   };
+
+  setFormation(value: number): void {
+    const next = THREE.MathUtils.clamp(value, 0, 1);
+    if (next === this.formation.value) return;
+    this.formation.value = next;
+    this.centerText.material.opacity = THREE.MathUtils.smoothstep(next, .65, 1);
+    if (this.visible && !document.hidden && !this.renderer.getContext().isContextLost()) this.renderer.render(this.scene, this.camera);
+  }
 
   setPaused(paused: boolean): void { this.paused = paused; this.sync(); }
 
@@ -163,6 +173,9 @@ class AngularGalaxy implements GalaxyController {
   private pointMaterialShader = {
     vertexShader: `
       attribute float size;
+      attribute vec4 scatter;
+      uniform float formation;
+      varying float particleVisibility;
       varying vec3 vColor;
       varying float vDistance;
       uniform float time;
@@ -173,7 +186,8 @@ class AngularGalaxy implements GalaxyController {
         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
         vDistance = -mvPosition.z;
         float pulse = sin(time * 2.0 + length(position)) * 0.15 + 1.0;
-        vec3 pos = position;
+        vec3 pos = mix(scatter.xyz, position, formation);
+        particleVisibility = mix(step(scatter.w, .025) * .55, 1., smoothstep(.1, .85, formation));
         pos.x += sin(time + position.z * 0.5) * 0.05;
         pos.y += cos(time + position.x * 0.5) * 0.05;
         pos.z += sin(time + position.y * 0.5) * 0.05;
@@ -187,13 +201,14 @@ class AngularGalaxy implements GalaxyController {
       varying float vDistance;
       uniform float time;
       uniform float darkMode;
+      varying float particleVisibility;
       
       void main() {
         vec2 cxy = 2.0 * gl_PointCoord - 1.0;
         float r = dot(cxy, cxy);
         if (r > 1.0) discard;
         if (darkMode < .5) {
-          gl_FragColor = vec4(vColor, (1. - smoothstep(.45, 1., r)) * .72);
+          gl_FragColor = vec4(vColor, (1. - smoothstep(.45, 1., r)) * .72 * particleVisibility);
           #include <colorspace_fragment>
           return;
         }
@@ -203,7 +218,7 @@ class AngularGalaxy implements GalaxyController {
         finalColor += vec3(0.2, 0.4, 0.6) * outerGlow;
         float distanceFade = 1.0 - smoothstep(0.0, 50.0, vDistance);
         float intensity = mix(0.7, 1.0, distanceFade);
-        gl_FragColor = vec4(finalColor * intensity, (glow + outerGlow) * distanceFade);
+        gl_FragColor = vec4(finalColor * intensity, (glow + outerGlow) * distanceFade * particleVisibility);
       }
     `
   };
@@ -251,7 +266,7 @@ class AngularGalaxy implements GalaxyController {
     this.mainGroup.add(this.orbitRings);
 
     const centerTextSize = isMobile ? 49 : 66;
-    this.centerText = this.createTextSprite('WEB & APP\nDEVELOPER', centerTextSize, this.currentTextColor);
+    this.centerText = this.createTextSprite('WEB & MOBILE\nDEVELOPER', centerTextSize, this.currentTextColor);
     this.centerText.position.set(0, 0, 0);
     this.mainGroup.add(this.centerText);
 
@@ -274,6 +289,7 @@ class AngularGalaxy implements GalaxyController {
   private createSpiralSphere(radius: number, particleCount: number, colors: THREE.Color[]): ParticleScene {
     const geometry = new THREE.BufferGeometry();
     const positions: number[] = [];
+    const scatter: number[] = [];
     const particleColors: number[] = [];
     const sizes: number[] = [];
 
@@ -284,6 +300,11 @@ class AngularGalaxy implements GalaxyController {
       const y = radius * Math.sin(phi) * Math.sin(theta);
       const z = radius * Math.cos(phi);
       positions.push(x, y, z);
+      // Stable seeds keep the exact same particle trajectories when scrolling backwards.
+      const seed = (Math.sin(i * 127.1 + 311.7) * 43758.5453) % 1;
+      const seed2 = (Math.sin(i * 269.5 + 183.3) * 43758.5453) % 1;
+      const seed3 = (Math.sin(i * 419.2 + 73.1) * 43758.5453) % 1;
+      scatter.push(seed * 14, seed2 * 10, seed3 * 4, Math.abs((Math.sin(i * 53.9 + 17.3) * 43758.5453) % 1));
 
       const colorPos = i / particleCount;
       const color1 = colors[Math.floor(colorPos * (colors.length - 1))];
@@ -298,10 +319,11 @@ class AngularGalaxy implements GalaxyController {
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
     geometry.setAttribute('color', new THREE.Float32BufferAttribute(particleColors, 3));
     geometry.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
+    geometry.setAttribute('scatter', new THREE.Float32BufferAttribute(scatter, 4));
 
     const material = new THREE.ShaderMaterial({
       uniforms: {
-        time: { value: 0 }, darkMode: { value: this.dark ? 1 : 0 }, particleProjection: this.particleProjection
+        formation: this.formation, time: { value: 0 }, darkMode: { value: this.dark ? 1 : 0 }, particleProjection: this.particleProjection
       },
       vertexShader: this.pointMaterialShader.vertexShader,
       fragmentShader: this.pointMaterialShader.fragmentShader,
@@ -347,7 +369,7 @@ class AngularGalaxy implements GalaxyController {
       geometry.setAttribute('offset', new THREE.Float32BufferAttribute(offsets, 3));
       const material = new THREE.ShaderMaterial({
         uniforms: {
-          flowTime: { value: 0 }, angularSpeed: { value: this.orbitSpeed },
+          formation: this.formation, flowTime: { value: 0 }, angularSpeed: { value: this.orbitSpeed },
           particleProjection: this.particleProjection,
           radius: { value: ringRadius }, centerY: { value: centerY }, phaseOffset: { value: i * .9 },
         },
@@ -356,6 +378,7 @@ class AngularGalaxy implements GalaxyController {
           uniform float flowTime; uniform float angularSpeed;
           uniform float radius; uniform float centerY; uniform float phaseOffset;
           uniform float particleProjection;
+          uniform float formation;
           varying vec3 vColor; varying float vEnergy;
           varying vec3 vViewPosition; varying vec3 vCoreCenter; varying float vCoreRadius;
           void main() {
@@ -373,6 +396,7 @@ class AngularGalaxy implements GalaxyController {
             gl_PointSize = size * (particleProjection / -viewPosition.z) * (1. + vEnergy * .45);
           }`,
         fragmentShader: `
+          uniform float formation;
           varying vec3 vColor; varying float vEnergy;
           varying vec3 vViewPosition; varying vec3 vCoreCenter; varying float vCoreRadius;
           void main() {
@@ -391,7 +415,7 @@ class AngularGalaxy implements GalaxyController {
             // Keep each particle consistently visible, with a short soft rim.
             // Normal blending preserves its hue without adding a bright belt.
             float particleAlpha = (1. - smoothstep(.62, 1., r)) * .88;
-            gl_FragColor = vec4(vColor, particleAlpha);
+            gl_FragColor = vec4(vColor, particleAlpha * smoothstep(.45, 1., formation));
             #include <colorspace_fragment>
           }`,
         vertexColors: true, transparent: true, depthWrite: false,
@@ -529,7 +553,7 @@ class AngularGalaxy implements GalaxyController {
     if (this.centerText) {
       const size = this.host.clientWidth < 768 ? 49 : 66;
       this.centerText.material.map?.dispose();
-      this.centerText.material.map = this.textTexture('WEB & APP\nDEVELOPER', size, this.currentTextColor);
+      this.centerText.material.map = this.textTexture('WEB & MOBILE\nDEVELOPER', size, this.currentTextColor);
       this.centerText.material.needsUpdate = true;
     }
 

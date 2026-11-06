@@ -26,7 +26,6 @@ export function createDeviceModel(host: HTMLElement, kind: DeviceKind, dark: boo
   const screens: ReturnType<typeof createDeviceScreen>[] = [];
   let disposed = false, visible = false, frame = 0;
   let modelReady = false;
-  const compactMotion = matchMedia('(max-width: 1023px), (pointer: coarse)');
   const root = new THREE.Group(); scene.add(root);
   const baseAngle = kind === 'web' ? -.34 : kind === 'mobile' ? -.16 : -.4;
   const readingPitch = kind === 'mobile' ? -Math.atan(.13) : kind === 'backend' ? .04 : 0;
@@ -178,14 +177,14 @@ export function createDeviceModel(host: HTMLElement, kind: DeviceKind, dark: boo
       return;
     }
     const bounds = host.getBoundingClientRect();
-    const { arrival, departure } = deviceScrollMotion(deviceScrollProgress(bounds.top, bounds.height, window.innerHeight), compactMotion.matches);
+    const { arrival, departure } = deviceScrollMotion(deviceScrollProgress(bounds.top, bounds.height, window.innerHeight));
     const entryYaw = kind === 'web' ? 1.35 : kind === 'mobile' ? -1.5 : .95;
-    const exitYaw = kind === 'mobile' ? .1 : -.08;
+    const exitYaw = -entryYaw;
     root.rotation.y = arrival * entryYaw + departure * exitYaw;
-    root.rotation.x = readingPitch + arrival * .18 + departure * .02;
-    root.rotation.z = arrival * (kind === 'mobile' ? -.12 : .07);
-    root.scale.setScalar(1 - arrival * .22);
-    root.position.set(arrival * (kind === 'web' ? -.22 : .16), baseY - arrival * .32, 0);
+    root.rotation.x = readingPitch + arrival * .14 - departure * .12;
+    root.rotation.z = (arrival - departure) * (kind === 'mobile' ? -.09 : .06);
+    root.scale.setScalar(1 - (arrival + departure) * .1);
+    root.position.set((arrival - departure) * (kind === 'web' ? -.12 : .1), baseY - (arrival + departure) * .15, 0);
   }
   function startInteraction() { interacted = true; sync(); }
   function setInteractionEnabled(enabled: boolean) {
@@ -315,14 +314,13 @@ export function createDeviceModel(host: HTMLElement, kind: DeviceKind, dark: boo
   const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting && entry.intersectionRatio >= .12; sync(); }, { threshold: [0, .12] }); observer.observe(host);
   document.addEventListener('visibilitychange', sync);
   window.addEventListener('scroll', scroll, { passive: true });
-  compactMotion.addEventListener('change', sync);
   const unbindRecovery = bindSceneRecovery(renderer.domElement, sync);
   resize(); setTheme(dark); if (kind === 'backend') onLoaded?.();
   return { attachTo, setTheme, resetView, setInteractionEnabled, dispose() {
     disposed = true; cancelAnimationFrame(frame); resizeObserver.disconnect(); observer.disconnect();
     controls.removeEventListener('start', startInteraction); controls.removeEventListener('change', render);
     renderer.domElement.removeEventListener('keydown', keydown); controls.dispose();
-    document.removeEventListener('visibilitychange', sync); window.removeEventListener('scroll', scroll); compactMotion.removeEventListener('change', sync); unbindRecovery();
+    document.removeEventListener('visibilitychange', sync); window.removeEventListener('scroll', scroll); unbindRecovery();
     screens.forEach(screen => screen.dispose());
     geometries.forEach(geometry => geometry.dispose()); materials.forEach(mat => mat.dispose()); textures.forEach(texture => { texture.dispose(); if(typeof ImageBitmap !== 'undefined' && texture.image instanceof ImageBitmap) texture.image.close(); });
     environmentTarget.dispose(); scene.clear(); backdrop.clear(); renderer.dispose(); renderer.forceContextLoss(); renderer.domElement.remove();
