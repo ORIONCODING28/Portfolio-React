@@ -6,9 +6,9 @@ export function createScrollPrompt(label:string,formation:{value:number},time:{v
   const context=canvas.getContext('2d');if(!context)throw new Error('Canvas unavailable');
   context.font='800 104px "Orbitron", sans-serif';context.textAlign='left';context.textBaseline='middle';
   const textWidth=context.measureText(label).width;
-  const left=(768-textWidth-92)/2,barLeft=left+textWidth+28;
+  const left=(768-textWidth-52)/2,barLeft=left+textWidth+28;
   context.fillStyle='#fff';context.fillText(label,left,80);
-  // Separate mask colours identify the white frame, mouse and moving wheel.
+  // Separate mask colours identify the white bar, mouse and moving wheel.
   const rounded=(x:number,y:number,width:number,height:number,radius:number)=>{
     context.beginPath(); context.moveTo(x+radius,y);
     context.lineTo(x+width-radius,y);context.quadraticCurveTo(x+width,y,x+width,y+radius);
@@ -17,9 +17,9 @@ export function createScrollPrompt(label:string,formation:{value:number},time:{v
     context.lineTo(x,y+radius);context.quadraticCurveTo(x,y,x+radius,y);context.closePath();
   };
   context.lineWidth=3;
-  context.strokeStyle='#ff0000'; rounded(barLeft,10,64,140,30); context.stroke();
-  context.strokeStyle='#00ff00'; rounded(barLeft+13,48,38,62,18); context.stroke();
-  context.fillStyle='#0000ff'; rounded(barLeft+29,61,6,14,3); context.fill();
+  context.fillStyle='#ff0000'; context.fillRect(barLeft+10,10,4,44); context.fillRect(barLeft+10,106,4,44);
+  context.strokeStyle='#00ff00'; rounded(barLeft+1,62,22,36,10); context.stroke();
+  context.fillStyle='#0000ff'; rounded(barLeft+10,69,4,8,2); context.fill();
   const pixels=context.getImageData(0,0,768,160).data;
   const positions:number[]=[],letters:number[]=[],references:number[]=[];
   for(let y=0;y<160;y+=3)for(let x=0;x<768;x+=3){
@@ -44,7 +44,7 @@ export function createScrollPrompt(label:string,formation:{value:number},time:{v
         isReference=reference;markerHeight=letter.y;
         vec4 target=projectionMatrix*modelViewMatrix*vec4(position,1.);
         vec2 glyph=letter;
-        glyph.y-=step(2.5,reference)*.075*(.5-.5*cos(time*2.8));
+        glyph.y-=step(2.5,reference)*.025*(.5-.5*cos(time*2.8));
         vec2 source=glyph*promptScale+promptCentre;
         gl_Position=vec4(mix(source,target.xy/target.w,formation),target.z/target.w,1.);
         gl_PointSize=mix(6.,4.8,step(.5,reference))*pixelRatio;
