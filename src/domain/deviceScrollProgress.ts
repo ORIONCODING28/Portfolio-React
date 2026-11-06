@@ -6,11 +6,12 @@ export function deviceScrollProgress(top: number, height: number, viewportHeight
 }
 
 /** Settle into a broad reading zone, with zero velocity at both phase boundaries. */
-export function deviceScrollMotion(progress: number, staticReading = false): { arrival: number; departure: number } {
-  if (staticReading) return { arrival: 0, departure: 0 };
+export function deviceScrollMotion(progress: number, quick = false): { arrival: number; departure: number } {
   const smooth = (value: number) => {
     const t = Math.max(0, Math.min(1, value));
     return t * t * (3 - 2 * t);
   };
-  return { arrival: 1 - smooth(progress / .36), departure: smooth((progress - .8) / .2) };
+  const entryEnd = quick ? .2 : .36;
+  const exitStart = quick ? .9 : .8;
+  return { arrival: 1 - smooth(progress / entryEnd), departure: smooth((progress - exitStart) / (1 - exitStart)) };
 }

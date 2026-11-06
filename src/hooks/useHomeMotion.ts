@@ -12,22 +12,22 @@ export function useHomeMotion(scope: RefObject<HTMLDivElement | null>) {
       for (const entry of entries) {
         if (!entry.isIntersecting) continue;
         observer.unobserve(entry.target);
-        if (compact.matches || document.hidden) continue;
+        if (document.hidden) continue;
         const element = entry.target as HTMLElement;
         const sideways = element.dataset.homeReveal === 'path';
-        const distance = sideways ? 18 : 14;
+        const distance = compact.matches ? 4 : sideways ? 18 : 14;
         const animation = element.animate([
-          { opacity: .4, transform: sideways ? `translateX(${-distance}px)` : `translateY(${distance}px)` },
+          { opacity: compact.matches ? 1 : .4, transform: sideways ? `translateX(${-distance}px)` : `translateY(${distance}px)` },
           { opacity: 1, transform: 'none' },
         ], {
-          duration: sideways ? 700 : 560,
-          delay: Number(element.dataset.motionDelay ?? 0),
+          duration: compact.matches ? 160 : sideways ? 700 : 560,
+          delay: compact.matches ? 0 : Number(element.dataset.motionDelay ?? 0),
           easing: 'cubic-bezier(.16, 1, .3, 1)',
         });
         active.set(element, animation);
         animation.onfinish = () => active.delete(element);
       }
-    }, { threshold: .12, rootMargin: '0px 0px -24px 0px' });
+    }, { threshold: compact.matches ? .01 : .12, rootMargin: compact.matches ? '48px 0px' : '0px 0px -24px 0px' });
     root.querySelectorAll('[data-home-reveal]').forEach(element => observer.observe(element));
     const visibility = () => { if (document.hidden) finish(); };
     const focus = (event: FocusEvent) => {

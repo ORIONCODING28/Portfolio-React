@@ -20,4 +20,4 @@ La Privacy conserva il limite di 76ch per la lettura. Dimensioni dei canvas, are
 
 Verifica del 6 novembre nel browser integrato: allineamenti e assenza di overflow orizzontale alle larghezze 320, 390, 768, 1024, 1280 e 2560 px, su Home, Profilo e Progetti; case study e Privacy controllati alle larghezze rappresentative. Controllata anche la modale Crediti in tema chiaro. Il controllo automatico di layout non ha segnalato problemi.
 
-Su telefono, tablet e dispositivi con puntatore touch, i testi della Home sono subito visibili e i modelli in pagina restano frontali: la lettura non dipende dall'avanzamento dello scroll. La vista interattiva rimane nella modale; su desktop resta la presentazione legata allo scroll.
+Su telefono, tablet e dispositivi con puntatore touch, le animazioni della Home restano attive ma sono più rapide: i testi si spostano di soli 4 px in 160 ms, senza dissolvenza o ritardi tra elementi. I modelli completano l’ingresso nel primo 20% del passaggio nello schermo (36% su desktop) e mantengono più a lungo la posa frontale. Uno scroll veloce aggiorna direttamente la posa, senza accodare animazioni. La vista interattiva rimane nella modale.
