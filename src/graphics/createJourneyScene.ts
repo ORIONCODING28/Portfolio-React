@@ -1,6 +1,6 @@
 import { bindSceneRecovery } from './bindSceneRecovery';
 import * as THREE from 'three';
-import { journeyProgress, journeyActiveStage } from './journeyTimeline';
+import { journeyFrame } from './journeyTimeline';
 
 /** Reconstruct the six luminous milestones and stardust path of the approved artwork. */
 export interface JourneyStage { index: number; x: number; y: number; opacity: number }
@@ -24,7 +24,7 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
   const textures: THREE.Texture[] = [];
   let seed = 731;
   const random = () => { seed = (Math.imul(seed,1664525) + 1013904223) >>> 0; return seed / 4294967296; };
-  const uniforms = { progress:{value:0}, projection:{value:1}, tint:{value:new THREE.Vector3(dark ? 0 : .02745,dark ? .83 : .33333,dark ? 1 : .78824)} };
+  const uniforms = { travelling:{value:0},segmentStart:{value:0},segmentEnd:{value:1},progress:{value:0}, projection:{value:1}, tint:{value:new THREE.Vector3(dark ? 0 : .02745,dark ? .83 : .33333,dark ? 1 : .78824)} };
   const geometry = new THREE.BufferGeometry();
   const count=5000;
   const positions=new Float32Array(count*3);
@@ -52,14 +52,15 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
   const material=new THREE.ShaderMaterial({
     uniforms, transparent:true, depthWrite:false, blending:dark ? THREE.AdditiveBlending : THREE.NormalBlending,
     vertexShader:`attribute float phase; attribute float brightness; attribute float size; attribute float trail;
-      uniform float progress; uniform float projection;
+      uniform float progress; uniform float projection;uniform float travelling;uniform float segmentStart;uniform float segmentEnd;
       varying float intensity;
       void main(){
         float distance=phase-progress;
         // GLSL pow is undefined for a negative base, even with exponent 2.
         float normalizedDistance=distance/.085;
         float wave=exp(-normalizedDistance*normalizedDistance);
-        intensity=brightness*(trail>.5 ? .32+wave*2.4 : .2);
+        float withinSegment=step(segmentStart,phase)*step(phase,segmentEnd);
+        intensity=brightness*(trail>.5 ? .05+wave*2.4*travelling*withinSegment : .12);
         gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);
         gl_PointSize=max(1.,size*projection);
       }`,
@@ -72,7 +73,7 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
   // The connecting filament and moving head describe the route between milestones.
   // Background dust stays fixed and never receives the travelling highlight.
   const bridgeGeometry=new THREE.BufferGeometry().setFromPoints(curve.getSpacedPoints(180));
-  const bridgeMaterial=new THREE.LineBasicMaterial({color:dark ? 0x00d9f5 : 0x0755c9,transparent:true,opacity:.2,depthWrite:false});
+  const bridgeMaterial=new THREE.LineBasicMaterial({color:dark ? 0x00d9f5 : 0x0755c9,transparent:true,opacity:.07,depthWrite:false});
   const tailMaterial=new THREE.LineBasicMaterial({color:dark ? 0x00d9f5 : 0x0755c9,transparent:true,opacity:.95,depthWrite:false});
   const tailGeometry=bridgeGeometry.clone();
   geometries.push(bridgeGeometry,tailGeometry); materials.push(bridgeMaterial,tailMaterial);
@@ -119,28 +120,31 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
   let selected: number | null=null;
   let visible=false, frame=0, last=0, elapsed=0;
   const updateSequence=()=>{
-    const progress=journeyProgress(elapsed,nodePhases);
+    const current=journeyFrame(elapsed,nodePhases);
+    const progress=current.progress,activeIndex=current.index;
     uniforms.progress.value=progress;
-    const headProgress=Math.min(1,progress);
-    head.position.copy(curve.getPointAt(headProgress));
-    headMaterial.opacity=progress<=1 ? 1 : Math.max(0,1-(progress-1)/.08);
-    const segment=Math.round(headProgress*180);
-    tailGeometry.setDrawRange(Math.max(0,segment-14),Math.min(15,segment+1));
-    const activeIndex=journeyActiveStage(progress,nodePhases);
-    const illumination=Math.exp(-Math.pow((nodePhases[activeIndex]-progress)/.065,2));
-    const illuminated=illumination>.12;
+    uniforms.segmentStart.value=nodePhases[activeIndex];
+    uniforms.segmentEnd.value=nodePhases[Math.min(activeIndex+1,nodes.length-1)];
+    uniforms.travelling.value=current.travel>0 ? 1 : 0;
+    head.position.copy(curve.getPointAt(Math.min(1,progress)));
+    const strength=current.travel>0 ? Math.pow(Math.sin(Math.PI*current.travel),.3) : 0;
+    headMaterial.opacity=strength;
+    tailMaterial.opacity=.9*strength;
+    const segment=Math.round(progress*180);
+    const beginning=Math.max(Math.round(nodePhases[activeIndex]*180),segment-12);
+    tailGeometry.setDrawRange(beginning,Math.max(0,segment-beginning+1));
     nodes.forEach(({light},index)=>{
-      const active=index===activeIndex&&illuminated;
+      const active=index===activeIndex ? current.labelOpacity : 0;
       const restingOpacity=dark ? .55 : 1;
-      light.opacity=active ? restingOpacity+(1-restingOpacity)*illumination : restingOpacity;
-      light.color.copy(active ? litColor : restingColor);
+      light.opacity=restingOpacity+(1-restingOpacity)*active;
+      light.color.copy(restingColor).lerp(litColor,active);
     });
     const {position}=nodes[activeIndex];
     const stage: JourneyStage={
       index:activeIndex,
       x:(position.x-camera.left)/(camera.right-camera.left)*100,
       y:(camera.top-position.y)/(camera.top-camera.bottom)*100,
-      opacity:illuminated ? 1 : 0,
+      opacity:current.labelOpacity,
     };
     onStage(visible ? stage : null);
   };

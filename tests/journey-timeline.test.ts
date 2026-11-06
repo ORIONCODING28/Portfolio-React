@@ -1,31 +1,43 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { journeyProgress, journeyActiveStage, JOURNEY_STAGE_SECONDS } from '../src/graphics/journeyTimeline.ts';
+import {journeyFrame,JOURNEY_HOLD_SECONDS as hold,JOURNEY_STAGE_SECONDS as step,JOURNEY_TRAVEL_SECONDS as travel} from '../src/graphics/journeyTimeline.ts';
 const phases=[.2,.31,.45,.7,.86,1];
-test('the first frame begins at the first milestone',()=>{assert.equal(journeyProgress(0,phases),phases[0]);});
-test('every phase receives the same reading time regardless of spatial distance',()=>{
+
+test('each star holds its illumination and label before the flow departs',()=>{
   phases.forEach((phase,index)=>{
-    assert.equal(journeyProgress(index*JOURNEY_STAGE_SECONDS,phases),phase);
-    const progress=journeyProgress((index+.8)*JOURNEY_STAGE_SECONDS,phases);
-    assert.ok(progress>=phase && progress<(phases[index+1] ?? 1.18));
+    const frame=journeyFrame(index*step+hold*.5,phases);
+    assert.equal(frame.progress,phase);assert.equal(frame.index,index);
+    assert.equal(frame.travel,0);assert.equal(frame.labelOpacity,1);
   });
 });
-test('the final phase is reached before the sequence loops',()=>{
-  assert.ok(journeyProgress(5*JOURNEY_STAGE_SECONDS+2,phases)>=1);
-  assert.equal(journeyProgress(6*JOURNEY_STAGE_SECONDS,phases),phases[0]);
-});
-
-test('the caption switches to the approaching milestone before the flow crosses its centre',()=>{
-  assert.equal(journeyActiveStage(.44,phases),2);
-  assert.equal(journeyActiveStage(.69,phases),3);
-});
-test('each handover selects one milestone and remains stable across its centre',()=>{
-  for(let i=0;i<phases.length-1;i++){
-    const midpoint=(phases[i]+phases[i+1])/2;
-    assert.equal(journeyActiveStage(midpoint-.0001,phases),i);
-    assert.equal(journeyActiveStage(midpoint+.0001,phases),i+1);
-    assert.equal(journeyActiveStage(phases[i+1],phases),i+1);
+test('the flow travels one link and activates the destination only on arrival',()=>{
+  for(let index=0;index<phases.length-1;index++){
+    const halfway=journeyFrame(index*step+hold+travel*.5,phases);
+    assert.equal(halfway.index,index);assert.ok(halfway.travel>0 && halfway.travel<1);
+    assert.ok(halfway.progress>phases[index] && halfway.progress<phases[index+1]);
+    assert.equal(halfway.labelOpacity,0);
+    const arrived=journeyFrame((index+1)*step,phases);
+    assert.equal(arrived.index,index+1);assert.equal(arrived.labelOpacity,1);
+    assert.ok(Math.abs(arrived.progress-phases[index+1])<1e-10);
   }
-  assert.equal(journeyActiveStage(1.15,phases),5);
-  assert.equal(journeyActiveStage(journeyProgress(6*JOURNEY_STAGE_SECONDS,phases),phases),0);
+});
+test('the final star receives its reading time and fades before restarting',()=>{
+  const last=(phases.length-1)*step;
+  assert.equal(journeyFrame(last+hold*.8,phases).labelOpacity,1);
+  const fading=journeyFrame(last+hold+.2,phases);
+  assert.ok(fading.fade>0 && fading.fade<1);assert.equal(fading.progress,1);
+  assert.equal(journeyFrame(last+hold+.4,phases).index,0);
+});
+test('the approaching star never receives the label prematurely',()=>{
+  for(let destination=1;destination<phases.length;destination++){
+    const approaching=journeyFrame(destination*step-.0001,phases);
+    assert.equal(approaching.index,destination-1);
+    assert.equal(approaching.labelOpacity,0);
+    assert.ok(approaching.progress<phases[destination]);
+  }
+});
+test('empty and single-stage paths stay bounded',()=>{
+  assert.equal(journeyFrame(20,[]).labelOpacity,0);
+  assert.equal(journeyFrame(20,[.5]).progress,.5);
+  assert.equal(journeyFrame(-10,phases).index,0);
 });

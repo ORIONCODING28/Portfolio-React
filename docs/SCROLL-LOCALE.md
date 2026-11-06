@@ -6,11 +6,11 @@ Questa modifica non va pubblicata finché Giuseppe non approva la versione local
 
 - Canvas WebGL esteso a tutta la prima schermata: costellazione in movimento continuo e SCORRI composto da particelle (SCROLL in inglese). Le particelle convergono da tutta la superficie nella galassia centrale, che raggiunge la composizione originale mentre appaiono i testi. Il tutto è reversibile, senza intercettare wheel/touch. Lo scroll massimo è 180px su mobile, 230px su tablet, 320px su desktop; non esiste un tratto finale di attesa.
 - Invito SCORRI/SCROLL più grande, font Orbitron locale (SIL OFL inclusa), luce cyan/zaffiro e barra verticale di particelle con bagliore in movimento. Il font della scritta nella sfera resta invariato.
-- Su mobile: galassia prima, poi titolo, descrizione e pulsanti. Altezza del modello più compatta per far entrare i testi dopo un gesto rapido.
+- Su mobile: titolo, descrizione e pulsanti visibili subito; galassia sotto, che si forma nella sua posizione durante il normale scroll. Nessun pinning, nessun altezza aggiunta alla pagina, nessuno spostamento della galassia attraverso i testi. La progressione delle particelle resta reversibile.
 - Rimossa l’altezza minima di una viewport dalla composizione finale. L’intro iniziale resta a tutto schermo usando una maschera del canvas, senza mantenere vuoto nel flusso della pagina. A 2560x1440 si eliminano 541px di altezza forzata; la sezione successiva segue il fondo della hero.
 - Testo centrale: WEB & MOBILE / DEVELOPER. Colori e geometria delle orbite conservati.
 - Rotazione continua dei dispositivi: comincia quando il centro del modello entra nella zona visibile, rallenta nella posizione frontale al centro dello schermo e prosegue nella stessa direzione durante l’uscita. Nessun tratto fermo. Esplorazione manuale solo nella modale.
-- Percorso: collegamento luminoso, coda e testa in movimento tra le stelle; polvere ferma. La modale mette in pausa il punto corrente e lo riprende alla chiusura. Uscendo dalla sezione la sequenza si azzera per il prossimo ingresso.
+- Percorso: sosta di lettura su ogni stella, poi viaggio della scia soltanto sul collegamento verso la successiva. Stella e testo si attivano all’arrivo; l’ultima fase ha la stessa sosta prima della dissolvenza e del nuovo ciclo. Il resto del percorso resta discreto e la polvere è ferma. La modale mette in pausa il punto corrente e lo riprende alla chiusura. Uscendo dalla sezione la sequenza si azzera per il prossimo ingresso.
 - Le brevi entrate dei contenuti si ripetono dopo l’uscita dalla viewport.
 
 ## Verifica
@@ -23,4 +23,4 @@ Questa modifica non va pubblicata finché Giuseppe non approva la versione local
 
 Anteprima: http://127.0.0.1:5180/
 
-La sezione Dalla formazione alla pratica non viene modificata in questa iterazione: resta quella del precedente branch locale, da rivedere successivamente. Nessun push o deploy eseguito.
+Questa iterazione comprende il nuovo viaggio tra le stelle approvato da Giuseppe. Verificati nel browser avanzamento della sequenza e pausa/ripresa della modale, oltre alla lettura immediata della home mobile e alla composizione desktop a 2560px. Nessun push o deploy eseguito.

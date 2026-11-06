@@ -13,13 +13,14 @@ export function useHeroScroll(scope: RefObject<HTMLDivElement | null>, galaxy: R
     if (!track || !stage || !art || !copy || !canvas) return;
     const header = document.querySelector<HTMLElement>('.site-header');
     let frame = 0, start = 0, distance = 1;
-    let stageHeight=1,availableHeight=1;
+    let stageHeight=1,availableHeight=1,inline=false;
     let resting = {left:0,top:0,width:1,height:1}, centred = resting;
     const draw = () => {
       frame = 0;
       if (document.hidden) return;
       const value = heroScrollFrame(window.scrollY, start, distance);
-      const interpolate = (a: number, b: number) => a + (b - a) * value.remaining;
+      const remaining=inline ? 0 : value.remaining;
+      const interpolate = (a: number, b: number) => a + (b - a) * remaining;
       const next = {
         left:interpolate(resting.left,centred.left), top:interpolate(resting.top,centred.top),
         width:interpolate(resting.width,centred.width), height:interpolate(resting.height,centred.height),
@@ -30,9 +31,10 @@ export function useHeroScroll(scope: RefObject<HTMLDivElement | null>, galaxy: R
       const fullHeight=Math.max(stageHeight,availableHeight);
       const visibleHeight=interpolate(stageHeight,availableHeight);
       canvas.style.clipPath=`inset(0 0 ${Math.max(0,fullHeight-visibleHeight)}px 0)`;
-      copy.style.opacity = String(value.copy);
-      copy.style.transform = `translateY(${12 * (1 - value.copy)}px)`;
-      copy.style.pointerEvents = value.copy < .1 ? 'none' : '';
+      const copyVisibility=inline ? 1 : value.copy;
+      copy.style.opacity = String(copyVisibility);
+      copy.style.transform = `translateY(${12 * (1 - copyVisibility)}px)`;
+      copy.style.pointerEvents = copyVisibility < .1 ? 'none' : '';
       track.dataset.introState = value.progress <= .0001 ? 'opening' : value.progress >= .9999 ? 'settled' : 'moving';
     };
     const schedule = () => { if (!frame) frame = requestAnimationFrame(draw); };
@@ -41,11 +43,12 @@ export function useHeroScroll(scope: RefObject<HTMLDivElement | null>, galaxy: R
       const viewport = window.innerHeight, width = document.documentElement.clientWidth;
       const available = Math.max(200, viewport - top);
       distance = heroScrollDistance(width,viewport);
+      inline=width<640;track.dataset.introMode=inline?'inline':'staged';
       track.dataset.introReady = 'true';
       track.style.setProperty('--intro-top',`${top}px`);
       track.style.setProperty('--intro-viewport',`${available}px`);
       stageHeight=stage.offsetHeight;availableHeight=available;
-      track.style.height = `${distance + stageHeight}px`;
+      if(inline)track.style.removeProperty('height');else track.style.height = `${distance + stageHeight}px`;
       const bounds = art.getBoundingClientRect(), stageBounds = stage.getBoundingClientRect();
       canvas.style.left = `${-stageBounds.left}px`;
       canvas.style.width = `${width}px`;
@@ -56,7 +59,7 @@ export function useHeroScroll(scope: RefObject<HTMLDivElement | null>, galaxy: R
       track.dataset.introReady = 'true';
       draw();
     };
-    const focus = () => { window.scrollTo({top:start+distance,behavior:'instant'}); draw(); };
+    const focus = () => { if(inline)return; window.scrollTo({top:start+distance,behavior:'instant'}); draw(); };
     const resize = new ResizeObserver(measure);
     resize.observe(stage); if(header)resize.observe(header);
     measure();
@@ -72,7 +75,7 @@ export function useHeroScroll(scope: RefObject<HTMLDivElement | null>, galaxy: R
       for(const property of ['opacity','transform','pointer-events'])copy.style.removeProperty(property);
       canvas.style.removeProperty('left'); canvas.style.removeProperty('width');canvas.style.removeProperty('clip-path');
       track.style.removeProperty('height'); track.style.removeProperty('--intro-top'); track.style.removeProperty('--intro-viewport');
-      delete track.dataset.introReady; delete track.dataset.introState;
+      delete track.dataset.introReady; delete track.dataset.introState;delete track.dataset.introMode;
     };
   },[scope,galaxy,presentation]);
 }
