@@ -1,6 +1,6 @@
 # Home: prova locale delle animazioni
 
-Branch: `local/scroll-choreography`. Online invariato, nessun push/deploy autorizzato.
+Branch: `local/scroll-choreography`. Versione approvata da Giuseppe per la pubblicazione il 6 novembre 2026.
 
 ## Intro a tempo, identica su tutti i formati
 
