@@ -30,3 +30,10 @@ Le verifiche responsive nel browser non equivalgono a prove fisiche su iPhone/iP
 - Il percorso si costruisce una sola volta per caricamento, resta disegnato e non si azzera uscendo dalla sezione o cambiando rotta. Dopo la costruzione continua soltanto l’impulso.
 - Aspetto finale ripreso dal codice della versione originale indicata nella foto: stelle bianche a riposo, cyan al passaggio, stessa polvere luminosa, forma e proporzioni originali. Costruzione unica mantenuta.
 - Le tappe diventano cliccabili quando sono create. Modali e pausa/ripresa del punto corrente conservate.
+
+## Flusso dopo la costruzione
+
+- Costruzione iniziale invariata. Solo la seconda fase usa un impulso continuo con giro di 11 secondi, velocità uniforme e dissolvenza fuori dagli estremi del percorso.
+- Accensione e attenuazione graduali delle stelle; didascalie sincronizzate e separate per evitare sovrapposizioni fra le tappe.
+- Aggiornamento fino a 60 fps nella seconda fase, sospeso fuori viewport, a scheda nascosta e durante le modali.
+- 44 test automatici, inclusi avanzamento costante, continuità al riavvio e luminosità senza soglie brusche.

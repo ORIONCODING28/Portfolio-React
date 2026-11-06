@@ -1,6 +1,6 @@
 import { bindSceneRecovery } from './bindSceneRecovery';
 import * as THREE from 'three';
-import { journeyFrame, journeyNodeReveal } from './journeyTimeline';
+import { journeyFrame, journeyNodeReveal, journeyIllumination } from './journeyTimeline';
 
 // Keep the construction across route changes until a full page reload.
 let pageElapsed=0;
@@ -27,7 +27,7 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
   const textures: THREE.Texture[] = [];
   let seed = 731;
   const random = () => { seed = (Math.imul(seed,1664525) + 1013904223) >>> 0; return seed / 4294967296; };
-  const uniforms = { built:{value:0}, progress:{value:0}, projection:{value:1}, tint:{value:new THREE.Vector3(dark ? 0 : .02745,dark ? .83 : .33333,dark ? 1 : .78824)} };
+  const uniforms = { pulseOpacity:{value:1}, built:{value:0}, progress:{value:0}, projection:{value:1}, tint:{value:new THREE.Vector3(dark ? 0 : .02745,dark ? .83 : .33333,dark ? 1 : .78824)} };
   const geometry = new THREE.BufferGeometry();
   const count=5000;
   const positions=new Float32Array(count*3);
@@ -55,14 +55,14 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
   const material=new THREE.ShaderMaterial({
     uniforms, transparent:true, depthWrite:false, blending:dark ? THREE.AdditiveBlending : THREE.NormalBlending,
     vertexShader:`attribute float phase; attribute float brightness; attribute float size; attribute float trail;
-      uniform float progress; uniform float built; uniform float projection;
+      uniform float pulseOpacity; uniform float progress; uniform float built; uniform float projection;
       varying float intensity;
       void main(){
         float distance=phase-progress;
         // GLSL pow is undefined for a negative base, even with exponent 2.
         float normalizedDistance=distance/.085;
         float wave=exp(-normalizedDistance*normalizedDistance);
-        intensity=step(phase,built)*brightness*(.28+wave*1.25*trail);
+        intensity=step(phase,built)*brightness*(.28+wave*1.25*trail*pulseOpacity);
         gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);
         gl_PointSize=max(1.,size*projection);
       }`,
@@ -100,18 +100,21 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
   }
   const nodePhases=nodes.map(node=>node.phase);
   let selected: number | null=null;
-  let visible=false, frame=0, last=0, elapsed=pageElapsed;
+  let visible=false, frame=0, last=0, elapsed=pageElapsed, continuous=false;
   const updateSequence=()=>{
     const current=journeyFrame(elapsed,nodePhases);
     const progress=current.progress,activeIndex=current.index;
+    continuous=current.continuous;
+    uniforms.pulseOpacity.value=current.pulseOpacity;
     uniforms.progress.value=progress;
     uniforms.built.value=current.builtProgress;
     nodes.forEach(({light,sprite,size},index)=>{
       const reveal=journeyNodeReveal(elapsed,index);
-      const active=index===activeIndex?current.labelOpacity:0;
+      const active=current.continuous?journeyIllumination(progress,nodePhases[index])*current.pulseOpacity:index===activeIndex?current.labelOpacity:0;
       const restingOpacity=dark ? .55 : 1;
       light.opacity=reveal*(restingOpacity+(1-restingOpacity)*active);
-      light.color.copy(active>.12?litColor:restingColor);
+      if(current.continuous)light.color.copy(restingColor).lerp(litColor,active);
+      else light.color.copy(active>.12?litColor:restingColor);
       sprite.scale.set(size*reveal,size*1.45*reveal,1);
     });
     const {position}=nodes[activeIndex];
@@ -128,7 +131,7 @@ export function createJourneyScene(host: HTMLElement, onStage: (stage: JourneySt
   const tick=(now:number)=>{
     frame=0;
     if(!visible || document.hidden || renderer.getContext().isContextLost() || selected!==null)return;
-    if(now-last>=1000/30){
+    if(now-last>=1000/(continuous?60:30)){
       const delta=last ? Math.min((now-last)/1000,.1) : 0; elapsed+=delta; pageElapsed=elapsed; last=now;
       updateSequence();
       render();

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import {journeyFrame,journeyNodeReveal,JOURNEY_HOLD_SECONDS as hold,JOURNEY_STAGE_SECONDS as step,JOURNEY_TRAVEL_SECONDS as travel} from '../src/graphics/journeyTimeline.ts';
+import {journeyFrame,journeyNodeReveal,journeyIllumination,JOURNEY_PULSE_SECONDS as pulse,JOURNEY_HOLD_SECONDS as hold,JOURNEY_STAGE_SECONDS as step,JOURNEY_TRAVEL_SECONDS as travel} from '../src/graphics/journeyTimeline.ts';
 const phases=[.2,.31,.45,.7,.86,1];
 
 test('stars are created only when the first light reaches them',()=>{
@@ -32,7 +32,7 @@ test('construction advances monotonically and never disappears when the light re
     assert.ok(frame.builtProgress>=previous-1e-8);previous=frame.builtProgress;
     if(t>end){assert.equal(frame.builtProgress,1);assert.equal(frame.revealed,6);}
   }
-  assert.equal(journeyFrame(end+.2,phases).index,0);
+  assert.equal(journeyFrame(end+.7,phases).continuous,true);
   for(let i=0;i<6;i++)assert.equal(journeyNodeReveal(end*3,i),1);
 });
 test('the final star receives reading time before only the impulse repeats',()=>{
@@ -45,4 +45,26 @@ test('empty and single-stage routes stay bounded',()=>{
   assert.equal(journeyFrame(20,[]).revealed,0);
   assert.equal(journeyFrame(20,[.5]).progress,.5);
   assert.equal(journeyFrame(-10,phases).index,0);
+});
+
+test('the completed route has constant-speed motion, including through every star',()=>{
+  const start=5*step+hold+.6;
+  for(let t=.4;t<pulse-.4;t+=.2){
+    const a=journeyFrame(start+t,phases),b=journeyFrame(start+t+.1,phases);
+    assert.ok(Math.abs((b.progress-a.progress)-1.12*.1/pulse)<1e-9);
+    assert.equal(a.continuous,true);assert.equal(a.builtProgress,1);
+  }
+});
+test('the loop fades at its boundary and retains all constructed stars',()=>{
+  const start=5*step+hold+.6;
+  const before=journeyFrame(start+pulse-.0001,phases),after=journeyFrame(start+pulse+.0001,phases);
+  assert.ok(before.pulseOpacity<.001&&after.pulseOpacity<.001);
+  assert.equal(before.revealed,6);assert.equal(after.revealed,6);
+  assert.equal(before.builtProgress,1);assert.equal(after.builtProgress,1);
+});
+test('illumination rises and falls symmetrically without an abrupt threshold',()=>{
+  assert.equal(journeyIllumination(.5,.5),1);
+  assert.equal(journeyIllumination(.3,.5),0);
+  assert.ok(Math.abs(journeyIllumination(.47,.5)-journeyIllumination(.53,.5))<1e-9);
+  assert.ok(journeyIllumination(.499,.5)>.99);
 });
