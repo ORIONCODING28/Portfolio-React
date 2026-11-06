@@ -1,6 +1,6 @@
 export const JOURNEY_HOLD_SECONDS = 1.4;
 export const JOURNEY_TRAVEL_SECONDS = 1.1;
-export const JOURNEY_PULSE_SECONDS = 11;
+export const JOURNEY_PULSE_SECONDS = 15;
 export const JOURNEY_STAGE_SECONDS = JOURNEY_HOLD_SECONDS + JOURNEY_TRAVEL_SECONDS;
 const clamp=(value:number)=>Math.max(0,Math.min(1,value));
 const smooth=(value:number)=>{const t=clamp(value);return t*t*(3-2*t);};

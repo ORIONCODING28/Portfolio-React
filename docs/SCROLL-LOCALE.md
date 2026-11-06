@@ -33,7 +33,7 @@ Le verifiche responsive nel browser non equivalgono a prove fisiche su iPhone/iP
 
 ## Flusso dopo la costruzione
 
-- Costruzione iniziale invariata. Solo la seconda fase usa un impulso continuo con giro di 11 secondi, velocità uniforme e dissolvenza fuori dagli estremi del percorso.
+- Costruzione iniziale invariata. Solo la seconda fase usa un impulso continuo con giro di 15 secondi, velocità uniforme e dissolvenza fuori dagli estremi del percorso.
 - Accensione e attenuazione graduali delle stelle; didascalie sincronizzate e separate per evitare sovrapposizioni fra le tappe.
 - Aggiornamento fino a 60 fps nella seconda fase, sospeso fuori viewport, a scheda nascosta e durante le modali.
 - 44 test automatici, inclusi avanzamento costante, continuità al riavvio e luminosità senza soglie brusche.
