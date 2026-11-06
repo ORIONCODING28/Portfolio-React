@@ -6,7 +6,8 @@ export function deviceScrollProgress(top: number, height: number, viewportHeight
 }
 
 /** Settle into a broad reading zone, with zero velocity at both phase boundaries. */
-export function deviceScrollMotion(progress: number): { arrival: number; departure: number } {
+export function deviceScrollMotion(progress: number, staticReading = false): { arrival: number; departure: number } {
+  if (staticReading) return { arrival: 0, departure: 0 };
   const smooth = (value: number) => {
     const t = Math.max(0, Math.min(1, value));
     return t * t * (3 - 2 * t);

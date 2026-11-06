@@ -19,3 +19,5 @@ Navbar, contenuti e footer condividono `--content-width`, con limite di 1680 px 
 La Privacy conserva il limite di 76ch per la lettura. Dimensioni dei canvas, area delle orbite, spazi delle etichette animate e altezza stabile del percorso restano indipendenti dalla scala tipografica: non ridurli per recuperare spazio senza verificare le inquadrature. I canvas che arrivano ai bordi usano lo stesso margine laterale del contenitore.
 
 Verifica del 6 novembre nel browser integrato: allineamenti e assenza di overflow orizzontale alle larghezze 320, 390, 768, 1024, 1280 e 2560 px, su Home, Profilo e Progetti; case study e Privacy controllati alle larghezze rappresentative. Controllata anche la modale Crediti in tema chiaro. Il controllo automatico di layout non ha segnalato problemi.
+
+Su telefono, tablet e dispositivi con puntatore touch, i testi della Home sono subito visibili e i modelli in pagina restano frontali: la lettura non dipende dall'avanzamento dello scroll. La vista interattiva rimane nella modale; su desktop resta la presentazione legata allo scroll.
