@@ -380,6 +380,17 @@ export const certificationsIT: Certification[] = [
     order: 1
   },
   {
+    id: 6,
+    title: 'CSS Essentials',
+    issuing_organization: 'Cisco Networking Academy',
+    issue_date: '6 novembre 2026',
+    description: 'Attestato di completamento del corso CSS Essentials di Cisco Networking Academy, dedicato alla definizione dello stile e del layout delle pagine web con CSS.',
+    image: publicAsset('/assets/certification/Attestato_CSS_Essentials.png'),
+    badge: publicAsset('/assets/badge/css-essentials.png'),
+    credential_url: 'https://www.credly.com/badges/56561e68-1621-4c2d-861e-e56ab7a0c277',
+    order: 2
+  },
+  {
     id: 2,
     title: 'Pandas',
     issuing_organization: 'Kaggle',
@@ -388,7 +399,7 @@ export const certificationsIT: Certification[] = [
     image: publicAsset('/assets/certification/Attestato_Pandas.jpg'),
     badge: publicAsset('/assets/badge/pandas.jpg'),
     credential_url: 'https://www.kaggle.com/learn/certification/giuseppecairone28/pandas',
-    order: 2
+    order: 3
   },
   {
     id: 4,
@@ -399,7 +410,7 @@ export const certificationsIT: Certification[] = [
     image: publicAsset('/assets/certification/Attestato_Claude_101.png'),
     badge: publicAsset('/assets/certification/Attestato_Claude_101.png'),
     credential_url: 'https://academy.claude.com/verify/9d312e76cf2914e9a87d598aa7a47cf8',
-    order: 3
+    order: 4
   },
   {
       "id": 3,
@@ -410,7 +421,7 @@ export const certificationsIT: Certification[] = [
       "image": publicAsset("/assets/certification/Attestato_Claude_Code_101.png"),
       "badge": publicAsset("/assets/certification/Attestato_Claude_Code_101.png"),
       "credential_url": "https://academy.claude.com/verify/350526e1eec246b9a4d7992357af1d9a",
-      "order": 4
+      "order": 5
   },
   {
     id: 5,
@@ -421,7 +432,7 @@ export const certificationsIT: Certification[] = [
     image: publicAsset('/assets/certification/Attestato_Claude_Platform_101.png'),
     badge: publicAsset('/assets/certification/Attestato_Claude_Platform_101.png'),
     credential_url: 'https://academy.claude.com/verify/5a71be33b8d8c35c80a7e5d42dcdc486',
-    order: 5
+    order: 6
   }
 ];
 
@@ -438,6 +449,17 @@ export const certificationsEN: Certification[] = [
     order: 1
   },
   {
+    id: 6,
+    title: 'CSS Essentials',
+    issuing_organization: 'Cisco Networking Academy',
+    issue_date: '6 November 2026',
+    description: 'Certificate of completion for Cisco Networking Academy’s CSS Essentials course, covering web page styling and layout with CSS.',
+    image: publicAsset('/assets/certification/Attestato_CSS_Essentials.png'),
+    badge: publicAsset('/assets/badge/css-essentials.png'),
+    credential_url: 'https://www.credly.com/badges/56561e68-1621-4c2d-861e-e56ab7a0c277',
+    order: 2
+  },
+  {
     id: 2,
     title: 'Pandas',
     issuing_organization: 'Kaggle',
@@ -446,7 +468,7 @@ export const certificationsEN: Certification[] = [
     image: publicAsset('/assets/certification/Attestato_Pandas.jpg'),
     badge: publicAsset('/assets/badge/pandas.jpg'),
     credential_url: 'https://www.kaggle.com/learn/certification/giuseppecairone28/pandas',
-    order: 2
+    order: 3
   },
   {
     id: 4,
@@ -457,7 +479,7 @@ export const certificationsEN: Certification[] = [
     image: publicAsset('/assets/certification/Attestato_Claude_101.png'),
     badge: publicAsset('/assets/certification/Attestato_Claude_101.png'),
     credential_url: 'https://academy.claude.com/verify/9d312e76cf2914e9a87d598aa7a47cf8',
-    order: 3
+    order: 4
   },
   {
       "id": 3,
@@ -468,7 +490,7 @@ export const certificationsEN: Certification[] = [
       "image": publicAsset("/assets/certification/Attestato_Claude_Code_101.png"),
       "badge": publicAsset("/assets/certification/Attestato_Claude_Code_101.png"),
       "credential_url": "https://academy.claude.com/verify/350526e1eec246b9a4d7992357af1d9a",
-      "order": 4
+      "order": 5
   },
   {
     id: 5,
@@ -479,7 +501,7 @@ export const certificationsEN: Certification[] = [
     image: publicAsset('/assets/certification/Attestato_Claude_Platform_101.png'),
     badge: publicAsset('/assets/certification/Attestato_Claude_Platform_101.png'),
     credential_url: 'https://academy.claude.com/verify/5a71be33b8d8c35c80a7e5d42dcdc486',
-    order: 5
+    order: 6
   }
 ];
 
