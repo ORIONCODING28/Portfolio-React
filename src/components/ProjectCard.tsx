@@ -12,7 +12,7 @@ export function ProjectCard({ project, priority=false }: { project: Project; pri
     <ProjectPreview project={project} priority={priority}/>
     <div className="work-project-copy">
       <h2><Link to={`/projects/${project.slug}`}>{project.title.replace('Progetto ', '')}</Link></h2>
-      <p className="work-project-summary">{story?.detailSummary || project.short_description}</p>
+      <p className="work-project-summary">{story?.catalogDescription || story?.detailSummary || project.short_description}</p>
       <p className="work-project-context">{project.collaboration === 'team' ? (isEnglish ? 'Team project · Published website' : 'Progetto di gruppo · Sito pubblicato') : (isEnglish ? 'Personal project · Published website' : 'Progetto personale · Sito pubblicato')}</p>
       <p>{story?.contribution}</p>
       <ul className="work-technologies" aria-label={copy.technologies}>{(story?.technologies || project.technologies).split(/\s*[·,]\s*/).filter(Boolean).map(technology=><li key={technology}>{technology}</li>)}</ul>
